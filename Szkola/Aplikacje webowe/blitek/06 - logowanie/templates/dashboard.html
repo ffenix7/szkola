@@ -1,0 +1,10 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <p>Witaj, {{ session['user'] }}!</p>
+{% endblock %}
