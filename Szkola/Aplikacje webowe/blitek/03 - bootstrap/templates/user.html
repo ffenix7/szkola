@@ -4,14 +4,20 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Lista użytkowników</h2>
-    <ul class="list-group">
-        {% for user in users %}
-            <li class="list-group-item">
-                <a href="/user/{{ user.id }}">{{ user.username }}</a>
-                <span class="float-end">{{ user.email }}</span>
-            </li>
-        {% endfor %}  
-    </ul>
+    {% if user %}
+    <h2>Profil użytkownika</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ user.username }}</h5>
+            <p class="card-text">Email: {{ user.email }}</p>
+            <p class="card-text">ID: {{ user.id }}</p>
+            <a href="/" class="btn btn-primary">Powrót do strony głównej</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        Użytkownik nie znaleziony.
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
