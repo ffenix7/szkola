@@ -1,5 +1,6 @@
 <script lang='js'>
-  import countries from './data/countries.json';
+  //import countries from './data/countries.json';
+  let countries = []
   
   function getUrl(code){
     return `https://flagicons.lipis.dev/flags/4x3/${code}.svg`;
