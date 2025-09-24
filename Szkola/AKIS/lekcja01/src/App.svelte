@@ -1,16 +1,24 @@
 <script lang='js'>
-  //import countries from './data/countries.json';
-  let countries = []
+  import Header from './routes/Header.svelte';
+  import Countries from './routes/Countries.svelte';
+  import Colorpicker from './routes/Colorpicker.svelte';
+  import NotFound from './routes/NotFound.svelte';
+  import Index from './routes/Index.svelte';
+  import { Router, Link, Route } from "svelte-routing";
+  export let url = "";
   
   function getUrl(code){
-    return `https://flagicons.lipis.dev/flags/4x3/${code}.svg`;
+    return `https://flagicons.lipis.dev/flags/4x3/${code.toLowerCase()}.svg`;
   }
-  let value;
+  let value = 'PL';
   </script>
 
-  <select bind:value={value}>
-    <option value="" disabled selected>Wybierz kraj</option>
-    {#each countries as country}
-      <option value={country.code}>{country.name}</option>
-    {/each}
-  </select>
+  <Header />
+
+ <Router url="{url}">
+
+    <Route path="/"><Index /></Route>
+    <Route path="/countries"><Countries /></Route>
+    <Route path="/colorpicker"><Colorpicker /></Route>
+    <Route path="/*"><NotFound /></Route>
+</Router>
