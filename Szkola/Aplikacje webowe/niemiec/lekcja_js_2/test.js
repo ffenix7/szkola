@@ -5,7 +5,10 @@ const port = 44444
 
 app.get('/', (req, res) => {
   res.sendFile('index.html', { root: path.join(__dirname, 'public') })
-  res.sendFile('style.css', { root: path.join(__dirname, 'public') })
+})
+
+app.get('/css', (req,res) =>{
+    res.sendFile('style.css', { root: path.join(__dirname, 'public') })
 })
 
 app.get('/kremowki', (req,res) =>{
