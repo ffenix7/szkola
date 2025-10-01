@@ -1,5 +1,5 @@
 <script lang='js'>
-  import countries from '../../data/countries.json';
+  import countries from '../data/countries.json';
   import Header from '../routes/Header.svelte';
   
   function getUrl(code){

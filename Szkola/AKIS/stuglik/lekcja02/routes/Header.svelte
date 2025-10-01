@@ -15,7 +15,7 @@
     <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
       <Link to="/countries" class="mr-5 hover:text-gray-900">COUNTRIES</Link>
       <Link to="/colorpicker" class="mr-5 hover:text-gray-900">COLORPICKER</Link>
-      <Link to="/third-link" class="mr-5 hover:text-gray-900">Third Link</Link>
+      <Link to="/quiz" class="mr-5 hover:text-gray-900">Quiz</Link>
       <Link to="/fourth-link" class="mr-5 hover:text-gray-900">Fourth Link</Link>
     </nav>
     <button class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Button

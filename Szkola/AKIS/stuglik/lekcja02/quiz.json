@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "question": "What is the output of the following Python code: print(2 ** 3)?",
+    "options": ["5", "6", "8", "9"],
+    "answer": "8"
+  },
+  {
+    "id": 2,
+    "question": "Which keyword is used to define a function in JavaScript?",
+    "options": ["def", "func", "function", "lambda"],
+    "answer": "function"
+  },
+  {
+    "id": 3,
+    "question": "What is the time complexity of binary search in a sorted array?",
+    "options": ["O(1)", "O(n)", "O(log n)", "O(n log n)"],
+    "answer": "O(log n)"
+  },
+  {
+    "id": 4,
+    "question": "In Python, what does the method 'list.append(x)' do?",
+    "options": [
+      "Adds x at the beginning of the list",
+      "Adds x at the end of the list",
+      "Removes the first element equal to x",
+      "Creates a copy of the list with x included"
+    ],
+    "answer": "Adds x at the end of the list"
+  },
+  {
+    "id": 5,
+    "question": "Which of the following is NOT an OOP principle?",
+    "options": ["Encapsulation", "Polymorphism", "Recursion", "Inheritance"],
+    "answer": "Recursion"
+  }
+]
