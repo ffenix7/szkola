@@ -43,7 +43,7 @@ void LinkedList::insertBack(double num){
 }
 
 void LinkedList::insertAt(int index, double num){
-    if(index > this->size()) throw std::runtime_error("Index out of bounds!");
+    if(index < 0 || index > this->size()) throw std::runtime_error("Index out of bounds!");
     if(index == this->size()) this->insertFront(num);
 
     ListNode* cur = this->head;
@@ -59,7 +59,7 @@ void LinkedList::insertAt(int index, double num){
 }
 
 double LinkedList::at(int index){
-    if(index > this->size()) throw std::runtime_error("Index out of bounds!");
+    if(index < 0 || index > this->size()) throw std::runtime_error("Index out of bounds!");
     
     ListNode* cur = this->head;
     int iterator = 0;
@@ -146,7 +146,7 @@ bool LinkedList::deleteAll(double num) {
 
 double LinkedList::popFront(){
     double val = this->head->val;
-    this->deleteAt(0);
+    deleteAt(0);
     return val;
 }
 
