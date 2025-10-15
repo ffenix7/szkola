@@ -17,11 +17,10 @@ function luckyMiddleware(req, res, next) {
 }
 
 app.use(loggerMiddleware);
-app.use('/static', express.static(__dirname + '/static'));
 app.use('/public', express.static(__dirname + '/public'));
 
 app.get('/style.css', (req, res) => {
-  res.sendFile(path.join(__dirname, 'static', 'style.css'));
+  res.sendFile(path.join(__dirname, 'style.css'));
 });
 
 app.get('/', (req, res) => {
