@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+        <script crossorigin src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        .foodList{
+            border:1px blue dashed;
+            display: flex;
+            flex-direction: column;
+        }
+        .food{
+            margin:10px;
+            border: 1px dashed red;
+        }
+        #foods{
+            display: flex;
+            flex-direction: row;
+        }
+        #container{
+            display: flex;
+            flex-direction: row;
+            gap:20px;
+        }
+    </style>
+</head> 
+<body>
+
+    <div id="react-app">
+
+    </div>
+    <script type="text/babel">
+
+        const FoodList = () =>{
+            const [item, setItem] = React.useState('kurtka')
+
+            const onButtonClick = () =>{
+                const items = ['tshirt', 'czapka', 'buty', "kurtka"];
+                const item = items[Math.floor(Math.random() * (items.length))]
+                console.log(item)
+                setItem(item)
+            }
+            return(
+                <div className="foodlist">
+                    <button onClick={onButtonClick}>klik</button>
+                    <div id="foods">
+                        <Food item={item} />
+                        <Food item={item} />
+                        <Food item={item} />
+                    </div>
+                </div>
+            )
+        }
+
+        const Food = (props) =>{
+            return(
+                <div className="food">
+                    <h2>{props.item}</h2>
+                </div>
+            )
+        }
+
+        ReactDOM.render(
+            <div id="container">
+                <FoodList />
+            </div>,
+            document.getElementById("react-app")
+        )
+    </script>
+</body>
+</html>
