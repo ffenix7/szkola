@@ -1,12 +1,20 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import os
+from PIL import Image, ImageTk
 
 class FileExplorer(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("File Explorer")
         self.geometry("600x400")
+
+        #wczytywanie ikon i skalowanie
+        folder_img = Image.open("icons/folder.png").resize((16, 16))
+        self.folder_icon = ImageTk.PhotoImage(folder_img)
+
+        file_img = Image.open("icons/file.png").resize((16, 16))
+        self.file_icon = ImageTk.PhotoImage(file_img)
 
         self.tree = ttk.Treeview(self)
         self.tree.heading("#0", text="Pliki i foldery", anchor='w')
@@ -18,7 +26,7 @@ class FileExplorer(tk.Tk):
         scrollbar.pack(side="right", fill="y")
 
         start_path = os.getcwd()
-        root_node = self.tree.insert('', 'end', text=start_path, open=True, values=[start_path])
+        root_node = self.tree.insert('', 'end', text=start_path, open=True, values=[start_path], image=self.folder_icon)
         self.populate_tree(root_node, start_path)
 
         #obsługa rozwijania katalogu
@@ -33,7 +41,7 @@ class FileExplorer(tk.Tk):
         try:
             for entry in os.listdir(path):
                 full_path = os.path.join(path,entry)
-                node = self.tree.insert(parent, 'end', text=entry, values=[full_path])
+                node = self.tree.insert(parent, 'end', text=entry, values=[full_path], image=self.folder_icon if os.path.isdir(full_path) else self.file_icon)
                 if os.path.isdir(full_path):
                     self.tree.insert(node, 'end') #dodanie pustego dziecka aby umożliwić rozwijanie
 
