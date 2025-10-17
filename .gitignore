@@ -4,3 +4,5 @@ venv/
 .exe
 .lib
 .exp
+users.db
+__pycache__
