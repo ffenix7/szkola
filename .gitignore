@@ -6,3 +6,4 @@ venv/
 .exp
 users.db
 __pycache__
+*.zip
