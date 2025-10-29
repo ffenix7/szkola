@@ -6,6 +6,7 @@ from auth.routes import auth_bp
 from extentions import db, bcrypt, login_manager
 from models import Users
 import os
+from store.routes import store_bp
 
 def create_app():
     #app config
@@ -19,6 +20,9 @@ def create_app():
     DATA_DIR = os.path.join(BASE_DIR, 'data')
     os.makedirs(DATA_DIR, exist_ok=True)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(DATA_DIR, 'users.db')
+    app.config['SQLALCHEMY_BINDS'] = {
+        'inventory': 'sqlite:///' + os.path.join(DATA_DIR, 'inventory.db')
+    }
 
     #extensions init
     db.init_app(app)
@@ -28,6 +32,7 @@ def create_app():
     #blueprint config
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(store_bp, url_prefix='/store')
 
     #user loader
     @login_manager.user_loader
