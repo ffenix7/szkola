@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Wpisy</h2>
+    <ul>
+        {{#each entries}}
+        {{#if this}}
+        <li>
+            {{this}}
+        </li>
+        {{else}}
+        <li>
+            Nie ma jeszcze żadnych wpisów
+        </li>
+        {{/if}}
+        {{/each}}
+    </ul>
+    <form method="post" action="/form">
+        <label for="nick">Nick</label><br>
+        <input name="nick" id="nick"><br>
+        <label for="content">Content</label><br>
+        <input name="content" id="content"><br> 
+        <input type="submit" value="wyślij">
+    </form>
+</body>
+</html>

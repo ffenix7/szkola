@@ -3,6 +3,7 @@
   import Countries from '../routes/Countries.svelte';
   import Colorpicker from '../routes/Colorpicker.svelte';
   import Quiz from './Quiz.svelte';
+  import Jokes from '../routes/Jokes.svelte';
   import NotFound from '../routes/NotFound.svelte';
   import Index from '../routes/Index.svelte';
   import { Router, Link, Route } from "svelte-routing";
@@ -21,6 +22,8 @@
     <Route path="/"><Index /></Route>
     <Route path="/countries"><Countries /></Route>
     <Route path="/colorpicker"><Colorpicker /></Route>
+    <Route path="/jokes"><Jokes /></Route>
     <Route path="/quiz"><Quiz /></Route>
     <Route path="/*"><NotFound /></Route>
+
 </Router>
