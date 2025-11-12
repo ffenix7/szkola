@@ -1,8 +1,16 @@
 import express from 'express';
 import { engine } from 'express-handlebars';
 import fs from 'node:fs';
+import { title } from 'node:process';
+
 
 const app = express();
+
+// Wyłącz cache dla wszystkich odpowiedzi
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+});
 
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
@@ -34,5 +42,21 @@ app.post('/form', async (req,res) => {
 app.get('/', (req,res) => {
     res.render('home');
 })
+
+app.get('/podstrona', (req,res) => {
+    res.render('podstrona');
+});
+
+app.get('/button', (req,res) => {
+    res.render('button');
+});
+
+app.get("/ajax", (req,res) =>{
+    res.json({message: "Hello from server!"});
+})
+
+app.get('/script.js', (req,res) => {
+    res.sendFile('script.js', { root: '.' });
+});
 
 app.listen(3000);
