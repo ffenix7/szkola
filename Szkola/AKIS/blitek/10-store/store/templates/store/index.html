@@ -36,10 +36,19 @@
             {% endwith %}
         </div>
 
-        <div class="row mx-5">
-            <div class="col-lg-12">
-                <a href="#" class="btn btn-sm btn-outline-success float-end mx-1">Dodaj produkt</a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#import-modal" class="btn btn-sm btn-outline-success float-end mx-1">Importuj</a>
+        <div class="row mx-5 justify-content-end">
+            <div class="col-auto">
+                <form action="{{url_for('store.index')}}" method="POST">
+                    <div class="input-group input-group-sm">
+                        <a href="{{url_for('store.index')}}" class="btn btn-sm btn-outline-secondary">Wyczyść</a>
+                        <input type="text" name="search" class="form-control" placeholder="Szukaj..." value="{{search_query}}">
+                        <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-auto">
+                <a href="#" class="btn btn-sm btn-outline-success mx-1">Dodaj produkt</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#import-modal" class="btn btn-sm btn-outline-success mx-1">Importuj</a>
             </div>
         </div>
 
@@ -84,7 +93,7 @@
             </table>
         </div>
         <!---pagination-->
-        <nav aria-label="Page navigation">
+        <!-- <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
                 {% if pagination.has_prev %}
                 <li class="page-item">
@@ -117,6 +126,28 @@
                     <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
                 </li>
                 {% endif %}
+            </ul>
+        </nav> -->
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <!---Poprzednia-->
+                <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
+                    <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
+                </li>
+                <!---Numery stron-->
+                {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+                    {% if p %}
+                        <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p) }}">{{ p }}</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                <!---Następna-->
+                <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
+                    <a class="page-link" href="{{url_for('store.index', page=pagination.next_num) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
+                </li>
             </ul>
         </nav>
 

@@ -15,8 +15,23 @@ import pandas as pd
 @login_required
 def index():
     page = request.args.get('page', 1, type=int)
+
+    search = request.args.get('search', '')
+    query = Inventory.query
+    if search:
+        query = query.filter(
+            Inventory.item_name.ilike(f'%{search}%') |
+            Inventory.symbol.ilike(f'%{search}%') |
+            Inventory.category.ilike(f'%{search}%') |
+            Inventory.brand.ilike(f'%{search}%') |
+            Inventory.model.ilike(f'%{search}%')
+        )
+        pagination = query.order_by(Inventory.id).paginate(page=page, per_page=10)
+        records = pagination.items
+
     pagination= Inventory.query.order_by(Inventory.id).paginate(page=page, per_page=10)
     records = pagination.items
+
     return render_template('store/index.html', title='Store Inventory', records=records, pagination=pagination)
 
 
