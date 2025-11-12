@@ -11,11 +11,10 @@ import pandas as pd
 #     records = Inventory.query.all()
 #     return render_template('store/index.html', title='Store Inventory', records=records)
 
-@store_bp.route('/')
+@store_bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
     page = request.args.get('page', 1, type=int)
-
     search = request.args.get('search', '')
     query = Inventory.query
     if search:
@@ -26,13 +25,10 @@ def index():
             Inventory.brand.ilike(f'%{search}%') |
             Inventory.model.ilike(f'%{search}%')
         )
-        pagination = query.order_by(Inventory.id).paginate(page=page, per_page=10)
-        records = pagination.items
 
-    pagination= Inventory.query.order_by(Inventory.id).paginate(page=page, per_page=10)
+    pagination= query.order_by(Inventory.id).paginate(page=page, per_page=10)
     records = pagination.items
-
-    return render_template('store/index.html', title='Store Inventory', records=records, pagination=pagination)
+    return render_template('store/index.html', title='Store Inventory', records=records, pagination=pagination, search=search)
 
 
 @store_bp.route('/import', methods=['GET', 'POST'])
