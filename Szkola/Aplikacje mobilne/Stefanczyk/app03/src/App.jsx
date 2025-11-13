@@ -16,29 +16,33 @@ function App() {
     showSpeed: true
   });
 
-  const filtered = json.filter(avatar =>{
-    let roleMatch = (RoleFilter === 'all' || avatar.tags.some(tag => tag === RoleFilter));
-    let hpMatch = false;
+  const filterAvatars = (list, roleFilter, hpFilter) => {
+    return list.filter(avatar => {
+      const roleMatch = roleFilter === 'all' || avatar.tags.includes(roleFilter);
 
-    if(hpFilter === 'all'){
-      hpMatch = true;
-    } else if(hpFilter === 'low' && avatar.stats.hp >= 0 && avatar.stats.hp <= 550){
-      hpMatch = true;
-    } else if(hpFilter === 'medium' && avatar.stats.hp > 550 && avatar.stats.hp <= 600){
-      hpMatch = true;
-    } else if(hpFilter === 'high' && avatar.stats.hp > 600){
-      hpMatch = true;
-    }
-  
-    return roleMatch && hpMatch;
-  })
+      let hpMatch = true;
+      if (hpFilter === 'all') {
+        hpMatch = true;
+      } else if (hpFilter === 'low') {
+        hpMatch = avatar.stats.hp >= 0 && avatar.stats.hp <= 550;
+      } else if (hpFilter === 'medium') {
+        hpMatch = avatar.stats.hp > 550 && avatar.stats.hp <= 600;
+      } else if (hpFilter === 'high') {
+        hpMatch = avatar.stats.hp > 600;
+      }
 
+      return roleMatch && hpMatch;
+    });
+}
+
+  const filtered = filterAvatars(json, RoleFilter, hpFilter);
+  console.log("git")
   return (
     <div>
       <Panel
         role={RoleFilter}
-        setRole={setRoleFilter}
         hp={hpFilter}
+        setRole={setRoleFilter}
         setHp={setHpFilter}
         viewConfig={viewConfig}
         setViewConfig={setViewConfig}
