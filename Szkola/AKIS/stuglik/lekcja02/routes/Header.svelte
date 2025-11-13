@@ -2,7 +2,6 @@
     import { Router, Link, Route } from "svelte-routing";
 </script>
 
-
 <Router>
 <header class="text-gray-600 body-font">
   <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -26,47 +25,3 @@
   </div>
 </header>
 </Router>
-
-<style>
-  header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-    padding: 20px 0;
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-  }
-  
-  a {
-    text-decoration: none;
-    color: #333;
-    margin-right: 20px;
-  }
-  
-  a:hover {
-    color: #666;
-  }
-  
-  nav {
-    display: flex;
-    gap: 20px;
-  }
-  
-  button {
-    background-color: #e9ecef;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #dee2e6;
-  }
-</style>
