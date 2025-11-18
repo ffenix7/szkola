@@ -7,3 +7,4 @@ venv/
 users.db
 __pycache__
 *.zip
+wpisy.txt

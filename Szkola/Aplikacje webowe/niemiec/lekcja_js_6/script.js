@@ -4,7 +4,7 @@ function arrToUl(arr){
     const url = document.createElement('ul');
     arr.forEach(item => {
         const li = document.createElement('li');
-        li.textContent = item;
+        li.textContent = item.message;
         url.appendChild(li);
     });
     return url;
@@ -15,7 +15,6 @@ const buttonNode = document.querySelector('#guzik')
 if (buttonNode){
     buttonNode.addEventListener('click', async () => {
         const url  = "/ajax"
-
         try {
             const resp = await fetch(url)
 
