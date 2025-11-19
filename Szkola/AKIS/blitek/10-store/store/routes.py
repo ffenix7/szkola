@@ -4,6 +4,7 @@ from extentions import db
 from models import Inventory
 from . import store_bp
 import pandas as pd
+from . forms import AddProductForm
 
 # @store_bp.route('/')
 # @login_required
@@ -14,6 +15,7 @@ import pandas as pd
 @store_bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
+    add_product_form = AddProductForm()
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '')
     query = Inventory.query
@@ -28,7 +30,7 @@ def index():
 
     pagination= query.order_by(Inventory.id).paginate(page=page, per_page=10)
     records = pagination.items
-    return render_template('store/index.html', title='Store Inventory', records=records, pagination=pagination, search=search)
+    return render_template('store/index.html', title='Store Inventory', records=records, pagination=pagination, search=search, add_product_form=add_product_form)
 
 
 @store_bp.route('/import', methods=['GET', 'POST'])
@@ -52,7 +54,7 @@ def import_data():
         item = Inventory(
             id=int(row['id']),
             symbol=row['symbol'],
-            item_name=row['name'],
+            item_name=row['item_name'],
             quantity=int(row['quantity']),
             price_pln=float(row['price_pln']),
             category=row['category'],
@@ -64,4 +66,35 @@ def import_data():
         db.session.add(item)
     db.session.commit()
     flash("Dane zostały zaimportowane pomyślnie!", category='success')
+    return redirect(url_for('store.index'))
+
+@store_bp.route('/add_product', methods=['POST'])
+@login_required
+def add_product():
+    if request.method == 'POST':
+        symbol = request.form.get('symbol')
+        item_name = request.form.get('item_name')
+        quantity = request.form.get('quantity' ,type=int)
+        price_pln = request.form.get('price_pln', type=float)
+        category = request.form.get('category')
+        brand = request.form.get('brand')
+        model = request.form.get('model')
+        weight_kg = request.form.get('weight_kg', type=float)
+
+        inventory_value_pln = int(quantity) * float(price_pln) if quantity and price_pln else 0
+
+        new_product = Inventory(
+            symbol=symbol,
+            item_name=item_name,
+            quantity=int(quantity),
+            price_pln=float(price_pln),
+            category=category,
+            brand=brand,
+            model=model,
+            weight_kg=float(weight_kg),
+            inventory_value_pln=inventory_value_pln
+        )
+        db.session.add(new_product)
+        db.session.commit()
+        flash("Produkt został dodany pomyślnie!", category='success')
     return redirect(url_for('store.index'))

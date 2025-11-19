@@ -43,11 +43,14 @@ def register():
         return redirect(url_for('main.home'))
     register_form = RegisterForm()
     if register_form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(register_form.password.data).decode('utf-8')
+        try:
+            hashed_password = bcrypt.generate_password_hash(register_form.password.data).decode('utf-8')
 
-        user = Users(email=register_form.email.data, password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-        flash('Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.', 'success')
-        return redirect(url_for('auth.login'))
+            user = Users(email=register_form.email.data, password=hashed_password)
+            db.session.add(user)
+            db.session.commit()
+            flash('Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.', 'success')
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            flash('Błąd podczas rejestracji! .', 'danger')
     return render_template(template_name_or_list='auth/register.html', title="Rejestracja", register_form=register_form)

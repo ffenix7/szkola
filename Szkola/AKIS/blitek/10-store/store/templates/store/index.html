@@ -41,13 +41,13 @@
                 <form action="{{url_for('store.index')}}" method="GET">
                     <div class="input-group input-group-sm">
                         <a href="{{url_for('store.index')}}" class="btn btn-sm btn-outline-secondary">Wyczyść</a>
-                        <input type="text" name="search" class="form-control" placeholder="Szukaj..." value="{{search_query}}">
+                        <input type="text" name="search" class="form-control" placeholder="Szukaj..." value="{{search}}">
                         <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-search"></i></button>
                     </div>
                 </form>
             </div>
             <div class="col-auto">
-                <a href="#" class="btn btn-sm btn-outline-success mx-1">Dodaj produkt</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#add-product-modal" class="btn btn-sm btn-outline-success mx-1">Dodaj produkt(modal)</a>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#import-modal" class="btn btn-sm btn-outline-success mx-1">Importuj</a>
             </div>
         </div>
@@ -76,7 +76,7 @@
                     <tr>
                         <td>{{ record.id }}</td>
                         <td>{{ record.symbol }}</td>
-                        <td>{{ record.name }}</td>
+                        <td>{{ record.item_name }}</td>
                         <td>{{ record.category }}</td>
                         <td>{{ record.brand }}</td>
                         <td>{{ record.model }}</td>
@@ -84,7 +84,7 @@
                         <td>{{ record.price_pln }}</td>
                         <td>{{ record.inventory_value_pln }}</td>
                         <td class="text-end">
-                            <a href="#" class="text-primary"><i class="bi-card-text"></i></a>
+                            <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#info-modal-{{record.id}}"><i class="bi-card-text"></i></a>
                             <a href="#" class="text-warning mx-2"><i class="bi-pencil-square"></i></a>
                             <a href="#" class="text-danger"><i class="bi-trash"></i></a>
                         </td>
@@ -144,7 +144,7 @@
                     <tr>
                         <td>{{ record.id }}</td>
                         <td>{{ record.symbol }}</td>
-                        <td>{{ record.name }}</td>
+                        <td>{{ record.item_name }}</td>
                         <td>{{ record.category }}</td>
                         <td>{{ record.brand }}</td>
                         <td>{{ record.model }}</td>
@@ -152,7 +152,7 @@
                         <td>{{ record.price_pln }}</td>
                         <td>{{ record.inventory_value_pln }}</td>
                         <td class="text-end">
-                            <a href="#" class="text-primary"><i class="bi-card-text"></i></a>
+                            <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#info-modal-{{record.id}}"><i class="bi-card-text"></i></a>
                             <a href="#" class="text-warning mx-2"><i class="bi-pencil-square"></i></a>
                             <a href="#" class="text-danger"><i class="bi-trash"></i></a>
                         </td>
@@ -206,5 +206,138 @@
             </div>
         </div>
 
+        <!--- add-product-modal -->
+        <div class="modal fade" id="add-product-modal" tabindex="-1" aria-labelledby="add-product-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="add-product-modal-label">Dodaj nowy produkt</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ url_for('store.add_product') }}" method="post">
+                        {{ add_product_form.hidden_tag() }}
+                        <div class="modal-body">
+                            <div class="form-group">
+                                {{ add_product_form.symbol.label(class="form-label") }}
+                                {{ add_product_form.symbol(class="form-control", id="symbol") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.item_name.label(class="form-label") }}
+                                {{ add_product_form.item_name(class="form-control", id="item_name") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.category.label(class="form-label") }}
+                                {{ add_product_form.category(class="form-control", id="category") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.brand.label(class="form-label") }}
+                                {{ add_product_form.brand(class="form-control", id="brand") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.model.label(class="form-label") }}
+                                {{ add_product_form.model(class="form-control", id="model") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.weight_kg.label(class="form-label") }}
+                                {{ add_product_form.weight_kg(class="form-control", id="weight_kg") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.price_pln.label(class="form-label") }}
+                                {{ add_product_form.price_pln(class="form-control", id="price_pln") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.quantity.label(class="form-label") }}
+                                {{ add_product_form.quantity(class="form-control", id="quantity") }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Anuluj</button>
+                            {{ add_product_form.submit(class="btn btn-success btn-sm") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- info-modal -->
+        {% for record in records %}
+            <div class="modal fade" id="info-modal-{{record.id}}" tabindex="-1" aria-labelledby="info-modal-label-{{record.id}}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light">
+                            <div>
+                                <h5 class="modal-title" id="info-modal-label-{{record.id}}">{{ record.item_name }}</h5>
+                                <small class="text-muted">ID: {{ record.id }} &nbsp;•&nbsp; Symbol: <span class="badge bg-secondary">{{ record.symbol }}</span></small>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6 class="mb-2">Szczegóły</h6>
+                                    <table class="table table-borderless table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th class="w-25">Kategoria</th>
+                                                <td>{{ record.category or '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Producent</th>
+                                                <td>{{ record.brand or '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Model</th>
+                                                <td>{{ record.model or '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Ilość</th>
+                                                <td>{{ record.quantity }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Waga (kg)</th>
+                                                <td>{{ '%.3f' % record.weight_kg if record.weight_kg is not none else '-' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-4 border-start">
+                                    <h6 class="mb-2">Cena i wartość</h6>
+                                    <div class="d-flex flex-column gap-2">
+                                        <div>
+                                            <small class="text-muted">Cena netto</small>
+                                            <div class="fs-5 fw-bold">{{ '%.2f' % record.price_pln }} PLN</div>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted">Wartość magazynowa</small>
+                                            <div class="fs-6">{{ '%.2f' % record.inventory_value_pln }} PLN</div>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted">Wartość jednostkowa (≈)</small>
+                                            <div class="text-muted small">{{ '%.2f' % (record.inventory_value_pln / record.quantity) if record.quantity else '-' }} PLN</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge bg-info text-dark">Kategoria: {{ record.category or '—' }}</span>
+                                <span class="badge bg-light text-dark">Producent: {{ record.brand or '—' }}</span>
+                                <span class="badge bg-light text-dark">Model: {{ record.model or '—' }}</span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Zamknij</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
