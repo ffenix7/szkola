@@ -45,7 +45,7 @@ int main()
 {
     srand(static_cast<unsigned int>(time(0)));
     std::string filename = "text.txt";
-    generateFile(100, "dupa", filename);
+    generateFile(1024*1024*1024, "dupa", filename);
     try {
         std::fstream file(filename, std::ios::in);
         if (file.is_open()) {
@@ -59,7 +59,7 @@ int main()
         while(std::getline(file, temp)){
             file_content+=temp;
         }
-        std::cout<<file_content;
+        
         std::cout<<'\n' << findPattern("dupa", file_content);
 
         file.close();
