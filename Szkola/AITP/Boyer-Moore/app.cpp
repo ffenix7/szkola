@@ -15,8 +15,7 @@ void generateFile(long long len=100000, std::string key="", std::string filename
     len -= key.length();
     if (len < 0) len = 0;
 
-    //long long key_idx = rand() % (len + 1);
-    long long key_idx = len-100;
+    long long key_idx = rand() % (len + 1);
     std::fstream file(filename, std::ios::out);
     for(long long i = 0; i < key_idx; i++) {
         file << random();
