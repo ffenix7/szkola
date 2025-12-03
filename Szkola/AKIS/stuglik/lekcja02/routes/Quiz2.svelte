@@ -63,6 +63,8 @@ import { onMount } from 'svelte';
     let questionsLoaded = false;
     let quizFinished = false;
     let results_history = [];
+    let showNameModal = false;
+    let playerName = '';
 
     onMount(async () => {
         questions = await generateQuestions();
@@ -87,20 +89,27 @@ import { onMount } from 'svelte';
         } else {
             quizFinished = true;
             showAnswer = false;
-            setHighscore();
+            showNameModal = true;
         }
     }
 
     function setHighscore() {
         let highscore = localStorage.getItem('highscore') || 0;
-        let name = prompt("Podaj swój nick:");
         if (points > +highscore) {
             localStorage.setItem('highscore', points.toString());
         }
         results_history = JSON.parse(localStorage.getItem('results_history') || '[]');
-        results_history.push({ date: new Date().toISOString(), score: points, name: name });
+        results_history.push({ date: new Date().toISOString(), score: points, name: playerName });
         localStorage.setItem('results_history', JSON.stringify(results_history));
         results_history = [...results_history];
+    }
+
+    function savePlayerName() {
+        if (playerName.trim()) {
+            setHighscore();
+            showNameModal = false;
+            playerName = '';
+        }
     }
 </script>
 
@@ -142,6 +151,38 @@ import { onMount } from 'svelte';
                 quizFinished = false;
             }}>Spróbuj ponownie</button>
         </div>
+        {#if showNameModal}
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-700">Zapisz wynik</h3>
+                    <p class="text-gray-700 mb-6">Wpisz swoją nazwę użytkownika, aby zapisać wynik:</p>
+                    <input
+                        type="text"
+                        bind:value={playerName}
+                        placeholder="Wpisz nick..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:border-blue-500"
+                        onkeydown={(e) => e.key === 'Enter' && savePlayerName()}
+                    />
+                    <div class="flex gap-4">
+                        <button
+                            class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200"
+                            onclick={savePlayerName}
+                        >
+                            Zapisz
+                        </button>
+                        <button
+                            class="flex-1 bg-gray-400 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-500 transition-colors duration-200"
+                            onclick={() => {
+                                showNameModal = false;
+                                playerName = '';
+                            }}
+                        >
+                            Pomiń
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {/if}
         <div class="overflow-x-auto mt-8">
             <table class="min-w-full bg-white rounded-xl shadow-md">
                 <thead>
@@ -156,7 +197,7 @@ import { onMount } from 'svelte';
                     </tr>
                 </thead>
                 <tbody>
-                    {#each results_history as result, idx}
+                    {#each results_history.sort((a, b) => b.score - a.score) as result, idx}
                     <tr class="even:bg-gray-50 hover:bg-blue-50 transition-colors">
                         <td class="py-2 px-4 text-center">{idx + 1}</td>
                         <td class="py-2 px-4 text-center">{result.name}</td>
