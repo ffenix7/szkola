@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block page_title %}Edytuj Zadanie{% endblock %}
+
+{% block page_content %}
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1 class="mb-4">✏️ Edytuj Zadanie</h1>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Tytuł <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ task.title }}" placeholder="Wpisz tytuł zadania" required>
+                            <small class="text-muted">Maksymalnie 200 znaków</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Opis</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" placeholder="Wpisz opis zadania (opcjonalnie)">{{ task.description if task.description else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Priorytet</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="niski" {% if task.priority == 'niski' %}selected{% endif %}>Niski</option>
+                                <option value="średni" {% if task.priority == 'średni' %}selected{% endif %}>Średni</option>
+                                <option value="wysoki" {% if task.priority == 'wysoki' %}selected{% endif %}>Wysoki</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 p-3 bg-light rounded">
+                            <strong>Utworzono:</strong> {{ task.created_at.strftime('%d.%m.%Y o %H:%M:%S') }}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-check-circle me-2"></i>Zapisz Zmiany</button>
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg"><i class="bi bi-x-circle me-2"></i>Anuluj</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

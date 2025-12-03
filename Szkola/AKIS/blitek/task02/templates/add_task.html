@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block page_title %}Dodaj Nowe Zadanie{% endblock %}
+
+{% block page_content %}
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1 class="mb-4">Dodaj Nowe Zadanie</h1>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Tytuł <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Wpisz tytuł zadania" required>
+                            <small class="text-muted">Maksymalnie 200 znaków</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Opis</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" placeholder="Wpisz opis zadania (opcjonalnie)"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Priorytet</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="niski">Niski</option>
+                                <option value="średni" selected>Średni</option>
+                                <option value="wysoki">Wysoki</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-plus-circle me-2"></i>Dodaj Zadanie</button>
+                            <a href="{{ url_for('index') }}" class="btn btn-danger btn-lg"><i class="bi bi-x-circle me-2"></i>Anuluj</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

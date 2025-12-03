@@ -43,8 +43,7 @@ app.get('/button', (req,res) => {
 });
 
 app.get("/ajax", (req,res) =>{
-    res.json({message: "Hello from server!"});
-    res.redirect('/button')
+    res.json({message: "PDF!"});
 })
 
 app.get('/script.js', (req,res) => {

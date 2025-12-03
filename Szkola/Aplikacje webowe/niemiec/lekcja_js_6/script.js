@@ -1,4 +1,4 @@
-console.log("Loaded js!");
+console.log("PDB!");
 
 function arrToUl(arr){
     const url = document.createElement('ul');
