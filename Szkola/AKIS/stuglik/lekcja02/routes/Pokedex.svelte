@@ -50,7 +50,7 @@
             pokemon_count = await getPokemonCount();
             console.log('Pokemon count:', pokemon_count);
             
-            // Załaduj z cache
+            // Load from localStorage if available
             if(localStorage.getItem('all_pokemons_names')){
                 const stored_names = JSON.parse(localStorage.getItem('all_pokemons_names'));
                 if(Array.isArray(stored_names) && stored_names.length > 0) {
@@ -79,8 +79,6 @@
         }
     });
 </script>
-
-<!-- Tailwind CSS classes applied below -->
 
 <nav class="flex flex-row gap-6 justify-center items-center bg-white text-gray-800 rounded-2xl mx-auto my-8 py-6 px-8 shadow-lg max-w-3xl border border-cyan-200">
         <div class="flex flex-col gap-1">
