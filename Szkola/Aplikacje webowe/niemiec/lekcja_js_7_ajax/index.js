@@ -48,6 +48,9 @@ app.get('/login', (req,res) => {
         else{
             return res.render('login', { error: 'Invalid email or password', email });
         }
+    } else {
+        res.render('login');
+    }
 });
 
 app.get('/test-cookies', (req,res) => {
