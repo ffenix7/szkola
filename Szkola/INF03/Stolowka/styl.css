@@ -1,0 +1,83 @@
+*{
+    font-family: 'Century', serif;
+}
+
+header{
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+header img{
+    display: inline-block;
+}
+
+header, footer{
+    background-color: #CCA10B;
+    color: white;
+    font-style: italic;
+    padding: 5px;
+    text-align: center;
+    clear: both;
+}
+
+aside{
+    background-color: rgb(5,160,88);
+    opacity: 0.8;
+    float: left;
+}
+
+#lewy{
+    text-align: left;
+    width: 70%;
+    height: 620px;
+}
+
+#prawy{
+    font-family: "LucidaConsole", "Consolas", "Courier New", monospace;
+    width: 30%;
+    height: 600px;
+    padding-top: 20px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+#podsumowanie{
+    padding-left: 20px;
+}
+
+.item{
+    margin: 8px 0;
+}
+
+.sep{
+    border: none;
+    border-top: 1px dashed rgba(0,0,0,0.8);
+    width: 60%;
+    margin: 10px 0;
+}
+
+header p{
+    font-weight: bold;
+    font-size: 32px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+h1{
+    padding-left: 30px;
+}
+
+#lewy article img{
+    height: 100px;
+    width: 100px;
+    padding: 10px;
+    margin-left: 30px;
+}
+
+#lewy article img.klikniety{
+    border-radius: 8px;
+    box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.7);
+}
+

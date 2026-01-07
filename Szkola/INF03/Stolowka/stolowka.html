@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Stołówka</title>
+        <link rel="stylesheet" href="styl.css">
+    </head>
+    <body>
+        <header>
+            <img src="./materiały/baner1.jpg" alt="grafika z logiem">
+            <p>Stołówka</p>
+            <img src="./materiały/baner2.jpg" alt="grafika z logiem">
+        </header>
+        <aside id="lewy">
+            <article>
+                <h1>Zupy</h1>
+                <img src="./materiały/pomidorowa.png" alt="zupa pomidorowa" title="zupa pomidorowa">
+                <img src="./materiały/ogorkowa.png" alt="zupa ogórkowa" title="zupa ogórkowa">
+            </article>
+            <article>
+                <h1>II danie</h1>
+                <img src="./materiały/zestaw1.png" alt="zestaw dnia" title="zestaw dnia">
+                <img src="./materiały/nalesniki.png" alt="naleśniki" title="naleśniki">
+                <img src="./materiały/placki.png" alt="placki ziemniaczane" title="placki ziemniaczane">
+            </article>
+            <article>
+                <h1>Dodatki</h1>
+                <img src="./materiały/kompot.png" alt="kompot" title="kompot">
+            </article>
+        </aside>
+        <aside id="prawy">
+            <label>Podsumowanie:</label>
+            <div id="podsumowanie" aria-live="polite"></div>
+        </aside>
+        <footer>
+            Stronę wykonał: Filip Gębala
+        </footer>
+    </body>
+    <script defer>
+        const lewy = document.getElementById('lewy');
+        const imgs = Array.from(lewy.querySelectorAll('img'));
+        const podsumowanie = document.getElementById('podsumowanie');
+
+        function findItemNode(index){
+            return podsumowanie.querySelector(`[data-index="${index}"]`);
+        }
+
+        imgs.forEach((img, index) => {
+            img.addEventListener('click', () => {
+                img.classList.toggle('klikniety');
+
+                const existing = findItemNode(index);
+                if(img.classList.contains('klikniety')){
+                    if(!existing){
+                        const div = document.createElement('div');
+                        div.className = 'item';
+                        div.dataset.index = index;
+                        div.textContent = img.title || img.alt || 'pozycja';
+
+                        const children = Array.from(podsumowanie.children);
+                        const next = children.find(child => Number(child.dataset.index) > index);
+                        if(next) podsumowanie.insertBefore(div, next);
+                        else podsumowanie.appendChild(div);
+                    }
+                } else {
+                    if(existing) existing.remove();
+                }
+            });
+        });
+    </script>
+</html>
