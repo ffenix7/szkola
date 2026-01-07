@@ -2,6 +2,7 @@ import express from 'express';
 import { engine } from 'express-handlebars';
 import { countryList } from './assets/countries.js';
 import fs from 'fs';
+import cookieParser from 'cookie-parser';
 
 const usersPath = './assets/users.json';
 let json = [];
@@ -17,10 +18,12 @@ app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', './templates');
 app.use(express.static('assets'));
+app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req,res) => {
+    console.log('Cookies: ', req.cookies);
     res.render('home');
 })
 
@@ -31,6 +34,29 @@ app.get('/register', (req,res) => {
 app.get('/country-search/', (req,res) =>{
     res.json([]);
 });
+
+app.get('/login', (req,res) => {
+    if(req.body.email && req.body.password) {
+        const email = (req.body.email || '').toLowerCase();
+        const password = req.body.password || '';
+        if (email == "test@gmail.com" && password == "zaq123") {
+            res.cookie('session_id', 'random_session_value', {
+                httpOnly: true,
+            });
+            return res.render('login-success', { email });
+        }
+        else{
+            return res.render('login', { error: 'Invalid email or password', email });
+        }
+});
+
+app.get('/test-cookies', (req,res) => {
+    res.cookie('test_cookie', 'test_value', {
+        httpOnly: true,
+    });
+    res.render('test');
+});
+
 
 app.get('/country-search/:term', (req,res) =>{
     const term = (req.params.term || '').toLowerCase();
