@@ -5,6 +5,8 @@ from models import Inventory
 from . import store_bp
 import pandas as pd
 from . forms import AddProductForm, EditProductForm
+from io import StringIO
+from flask import Response
 
 # @store_bp.route('/')
 # @login_required
@@ -68,6 +70,23 @@ def import_data():
     db.session.commit()
     flash("Dane zostały zaimportowane pomyślnie!", category='success')
     return redirect(url_for('store.index'))
+
+@store_bp.route('/export', methods=['GET'])
+@login_required
+def export_data():
+    query = "SELECT * FROM inventory ORDER BY id"
+    df = pd.read_sql_query(query, db.session.bind)
+    
+    output = StringIO()
+    df.to_csv(output, index=False)
+
+    response = Response(
+        output.getvalue(),
+        mimetype='text/csv',
+    )
+    response.headers["Content-Disposition"] = "attachment; filename=inventory_export.csv"
+    return response
+
 
 @store_bp.route('/add_product', methods=['POST'])
 @login_required
