@@ -95,7 +95,7 @@
         </div>
 </nav>
 
-<div class="h-screen overflow-hidden bg-gradient-to-br from-cyan-50 to-cyan-100 pb-8">
+<div class="min-h-screen overflow-y-auto bg-gradient-to-br from-cyan-50 to-cyan-100 pb-8">
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full max-w-6xl mx-auto my-8 bg-white/80 rounded-3xl p-8 shadow-xl border border-cyan-200">
         {#if isLoading}
             <div class="col-span-full text-center py-8 text-lg text-cyan-700 font-semibold">
@@ -123,31 +123,31 @@
 
     {#if !isLoading && totalPages > 1}
         <div class="flex flex-wrap justify-center items-center gap-3 mt-8">
-            <button class="select-none px-4 py-2 text-base bg-cyan-400 text-white rounded-lg font-semibold transition disabled:opacity-50" onclick={() => currentPage = Math.max(1, currentPage - 1)} disabled={currentPage === 1}>
+            <button style="cursor: pointer;" class="select-none px-4 py-2 text-base bg-cyan-400 text-white rounded-lg font-semibold transition disabled:opacity-50" onclick={() => currentPage = Math.max(1, currentPage - 1)} disabled={currentPage === 1}>
                 ← Poprzednia
             </button>
             {#if currentPage > 2}
-                <button class="select-none px-3 py-2 text-base bg-cyan-100 text-cyan-700 rounded-lg transition" onclick={() => currentPage = 1}>1</button>
+                <button style="cursor: pointer;" class="select-none px-3 py-2 text-base bg-cyan-100 text-cyan-700 rounded-lg transition" onclick={() => currentPage = 1}>1</button>
                 {#if currentPage > 3}
                     <span class="select-none px-2 text-xl">⋯</span>
                 {/if}
             {/if}
             {#if currentPage > 1}
-                <button class="select-none px-3 py-2 text-base bg-cyan-100 text-cyan-700 rounded-lg transition" onclick={() => currentPage = currentPage - 1}>{currentPage - 1}</button>
+                <button style="cursor: pointer;" class="select-none px-3 py-2 text-base bg-cyan-100 text-cyan-700 rounded-lg transition" onclick={() => currentPage = currentPage - 1}>{currentPage - 1}</button>
             {/if}
-            <button class="select-none px-4 py-2 text-base bg-cyan-400 text-white rounded-lg font-bold cursor-default shadow disabled" disabled>
+            <button style="cursor: pointer;" class="select-none px-4 py-2 text-base bg-cyan-400 text-white rounded-lg font-bold cursor-default shadow disabled" disabled>
                 {currentPage}
             </button>
             {#if currentPage < totalPages}
-                <button class="select-none px-3 py-2 text-base bg-cyan-100 text-cyan-700 rounded-lg transition" onclick={() => currentPage = currentPage + 1}>{currentPage + 1}</button>
+                <button style="cursor: pointer;" class="select-none px-3 py-2 text-base bg-cyan-100 text-cyan-700 rounded-lg transition" onclick={() => currentPage = currentPage + 1}>{currentPage + 1}</button>
             {/if}
             {#if currentPage < totalPages - 1}
                 {#if currentPage < totalPages - 2}
                     <span class="select-none px-2 text-xl">⋯</span>
                 {/if}
-                <button class="select-none px-3 py-2 text-base bg-cyan-100 text-cyan-700 rounded-lg transition" onclick={() => currentPage = totalPages}>{totalPages}</button>
+                <button style="cursor: pointer;" class="select-none px-3 py-2 text-base bg-cyan-100 text-cyan-700 rounded-lg transition" onclick={() => currentPage = totalPages}>{totalPages}</button>
             {/if}
-            <button class="select-none px-4 py-2 text-base bg-cyan-400 text-white rounded-lg font-semibold transition disabled:opacity-50" onclick={() => currentPage = Math.min(totalPages, currentPage + 1)} disabled={currentPage === totalPages}>
+            <button style="cursor: pointer;" class="select-none px-4 py-2 text-base bg-cyan-400 text-white rounded-lg font-semibold transition disabled:opacity-50" onclick={() => currentPage = Math.min(totalPages, currentPage + 1)} disabled={currentPage === totalPages}>
                 Następna →
             </button>
         </div>
