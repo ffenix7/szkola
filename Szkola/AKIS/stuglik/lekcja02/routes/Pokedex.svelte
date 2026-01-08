@@ -103,7 +103,7 @@
             </div>
         {:else}
             {#each displayedPokemons as pokemon, idx}
-            <a href={`/pokeinfo?name=${pokemon}`} class="block">
+            <a href={`/pokeinfo?id=${(currentPage - 1) * itemsPerPage + idx + 1}`} class="block">
                 <div class="flex flex-col items-center justify-center bg-white rounded-xl shadow border border-cyan-100 p-5 hover:scale-105 hover:shadow-2xl transition-transform duration-200">
                     {#await getPokemonSprite(pokemon, (currentPage - 1) * itemsPerPage + idx + 1)}
                         <div class="w-24 h-24 flex items-center justify-center text-3xl text-cyan-400">⏳</div>

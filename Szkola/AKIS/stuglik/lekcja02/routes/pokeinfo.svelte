@@ -1,13 +1,12 @@
 <script>
   import { onMount } from 'svelte';
 
-  let name = '';
+  let id = '';
   let pokemon = null;
   let isLoading = true;
   let error = '';
   let description = '';
 
-  // Kolory typów
   const typeColors = {
     normal: '#A8A77A',
     fire: '#EE8130',
@@ -29,29 +28,26 @@
     fairy: '#D685AD'
   };
 
-  // Pobierz nazwę pokemona z query stringa
   onMount(async () => {
     const params = new URLSearchParams(window.location.search);
-    name = params.get('name');
-    if (!name) {
-      error = 'Nie podano nazwy pokemona w adresie URL (?name=...)';
+    id = params.get('id');
+    if (!id) {
+      error = 'Nie podano id pokemona w adresie URL (?id=...)';
       isLoading = false;
       return;
     }
     try {
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
       if (!res.ok) throw new Error('Nie znaleziono pokemona');
       pokemon = await res.json();
 
-      // Pobierz opis pokemona
-      const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name.toLowerCase()}`);
+      // opis pokemona
+      const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
       if (speciesRes.ok) {
         const speciesData = await speciesRes.json();
-        // Szukaj polskiego opisu, jeśli nie ma to angielski
         const entryPL = speciesData.flavor_text_entries.find(e => e.language.name === 'pl');
         const entryEN = speciesData.flavor_text_entries.find(e => e.language.name === 'en');
         description = entryPL ? entryPL.flavor_text : (entryEN ? entryEN.flavor_text : 'Brak opisu.');
-        // Usuń znaki nowej linii
         description = description.replace(/\f|\n/g, ' ');
       } else {
         description = 'Brak opisu.';
@@ -103,4 +99,3 @@
     </div>
   </div>
 {/if}
-<!-- Tailwind CSS classes applied above -->
