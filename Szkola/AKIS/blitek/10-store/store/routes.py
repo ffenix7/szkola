@@ -8,12 +8,6 @@ from . forms import AddProductForm, EditProductForm
 from io import StringIO
 from flask import Response
 
-# @store_bp.route('/')
-# @login_required
-# def index():
-#     records = Inventory.query.all()
-#     return render_template('store/index.html', title='Store Inventory', records=records)
-
 @store_bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
@@ -21,6 +15,8 @@ def index():
     edit_product_form = EditProductForm()
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '')
+    order = request.args.get('order', '')
+    direction = request.args.get('direction', 'asc')
     query = Inventory.query
     if search:
         query = query.filter(
@@ -31,7 +27,16 @@ def index():
             Inventory.model.ilike(f'%{search}%')
         )
 
-    pagination= query.order_by(Inventory.id).paginate(page=page, per_page=10)
+    if order and hasattr(Inventory, order):
+        column = getattr(Inventory, order)
+        if direction == 'asc':
+            query = query.order_by(column.asc())
+        else:
+            query = query.order_by(column.desc())
+    else:
+        query = query.order_by(Inventory.id.asc())
+
+    pagination= query.paginate(page=page, per_page=10)
     records = pagination.items
     return render_template('store/index.html', title='Store Inventory', records=records, pagination=pagination, search=search, add_product_form=add_product_form, edit_product_form=edit_product_form)
 

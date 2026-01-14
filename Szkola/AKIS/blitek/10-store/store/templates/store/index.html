@@ -43,7 +43,9 @@
             <div class="col-auto">
                 <form action="{{url_for('store.index')}}" method="GET">
                     <div class="input-group input-group-sm">
-                        <a href="{{url_for('store.index')}}" class="btn btn-sm btn-outline-secondary">Wyczyść</a>
+                        <input type="hidden" name="order" value="{{ request.args.get('order', '') }}">
+                        <input type="hidden" name="direction" value="{{ request.args.get('direction', '') }}">
+                        <a href="{{url_for('store.index', order=request.args.get('order'), direction=request.args.get('direction'))}}" class="btn btn-sm btn-outline-secondary">Wyczyść</a>
                         <input type="text" name="search" class="form-control" placeholder="Szukaj..." value="{{search}}">
                         <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-search"></i></button>
                     </div>
@@ -63,16 +65,86 @@
             <table class="table table-hover mt-1">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Symbol</th>
-                        <th scope="col">Nazwa</th>
-                        <th scope="col">Kategoria</th>
-                        <th scope="col">Producent</th>
-                        <th scope="col">Model</th>
-                        <th scope="col">Ilość</th>
-                        <th scope="col">Waga (kg)</th>
-                        <th scope="col">Cena netto</th>
-                        <th scope="col">Wartość</th>
+                        <th scope="col">
+                            <a href="?order=id&direction={{ 'asc' if request.args.get('order') == 'id' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                ID
+                                {% if request.args.get('order') == 'id' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=symbol&direction={{ 'asc' if request.args.get('order') == 'symbol' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Symbol
+                                {% if request.args.get('order') == 'symbol' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=item_name&direction={{ 'asc' if request.args.get('order') == 'item_name' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Nazwa
+                                {% if request.args.get('order') == 'item_name' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=category&direction={{ 'asc' if request.args.get('order') == 'category' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Kategoria
+                                {% if request.args.get('order') == 'category' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=brand&direction={{ 'asc' if request.args.get('order') == 'brand' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Producent
+                                {% if request.args.get('order') == 'brand' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=model&direction={{ 'asc' if request.args.get('order') == 'model' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Model
+                                {% if request.args.get('order') == 'model' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=quantity&direction={{ 'asc' if request.args.get('order') == 'quantity' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Ilość
+                                {% if request.args.get('order') == 'quantity' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=weight_kg&direction={{ 'asc' if request.args.get('order') == 'weight_kg' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Waga (kg)
+                                {% if request.args.get('order') == 'weight_kg' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=price_pln&direction={{ 'asc' if request.args.get('order') == 'price_pln' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Cena netto
+                                {% if request.args.get('order') == 'price_pln' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=inventory_value_pln&direction={{ 'asc' if request.args.get('order') == 'inventory_value_pln' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Wartość
+                                {% if request.args.get('order') == 'inventory_value_pln' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th scope="col" class="text-end">Edycja</th>
                     </tr>
                 </thead>
@@ -108,12 +180,12 @@
                 <ul class="pagination justify-content-center">
                     <!---Poprzednia-->
                     <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                        <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num, search=search) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
+                        <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num, search=search, order=request.args.get('order'), direction=request.args.get('direction')) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
                     </li>
                     <!---Numery stron-->
                     {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
                         {% if p %}
-                            <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p, search=search) }}">{{ p }}</a></li>
+                            <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p, search=search, order=request.args.get('order'), direction=request.args.get('direction')) }}">{{ p }}</a></li>
                         {% else %}
                             <li class="page-item disabled"><span class="page-link">...</span></li>
                         {% endif %}
@@ -121,7 +193,7 @@
 
                     <!---Następna-->
                     <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                        <a class="page-link" href="{{url_for('store.index', page=pagination.next_num, search=search) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
+                        <a class="page-link" href="{{url_for('store.index', page=pagination.next_num, search=search, order=request.args.get('order'), direction=request.args.get('direction')) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
                     </li>
                 </ul>
             </nav>
@@ -132,16 +204,86 @@
             <table class="table table-hover mt-1">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Symbol</th>
-                        <th scope="col">Nazwa</th>
-                        <th scope="col">Kategoria</th>
-                        <th scope="col">Producent</th>
-                        <th scope="col">Model</th>
-                        <th scope="col">Ilość</th>
-                        <th scope="col">Waga (kg)</th>
-                        <th scope="col">Cena netto</th>
-                        <th scope="col">Wartość</th>
+                        <th scope="col">
+                            <a href="?order=id&direction={{ 'asc' if request.args.get('order') == 'id' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                ID
+                                {% if request.args.get('order') == 'id' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=symbol&direction={{ 'asc' if request.args.get('order') == 'symbol' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Symbol
+                                {% if request.args.get('order') == 'symbol' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=item_name&direction={{ 'asc' if request.args.get('order') == 'item_name' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Nazwa
+                                {% if request.args.get('order') == 'item_name' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=category&direction={{ 'asc' if request.args.get('order') == 'category' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Kategoria
+                                {% if request.args.get('order') == 'category' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=brand&direction={{ 'asc' if request.args.get('order') == 'brand' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Producent
+                                {% if request.args.get('order') == 'brand' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=model&direction={{ 'asc' if request.args.get('order') == 'model' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Model
+                                {% if request.args.get('order') == 'model' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=quantity&direction={{ 'asc' if request.args.get('order') == 'quantity' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Ilość
+                                {% if request.args.get('order') == 'quantity' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=weight_kg&direction={{ 'asc' if request.args.get('order') == 'weight_kg' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Waga (kg)
+                                {% if request.args.get('order') == 'weight_kg' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=price_pln&direction={{ 'asc' if request.args.get('order') == 'price_pln' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Cena netto
+                                {% if request.args.get('order') == 'price_pln' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=inventory_value_pln&direction={{ 'asc' if request.args.get('order') == 'inventory_value_pln' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Wartość
+                                {% if request.args.get('order') == 'inventory_value_pln' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th scope="col" class="text-end">Edycja</th>
                     </tr>
                 </thead>
@@ -172,12 +314,12 @@
                 <ul class="pagination justify-content-center">
                     <!---Poprzednia-->
                     <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                        <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
+                        <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num, order=request.args.get('order'), direction=request.args.get('direction')) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
                     </li>
                     <!---Numery stron-->
                     {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
                         {% if p %}
-                            <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p) }}">{{ p }}</a></li>
+                            <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p, order=request.args.get('order'), direction=request.args.get('direction')) }}">{{ p }}</a></li>
                         {% else %}
                             <li class="page-item disabled"><span class="page-link">...</span></li>
                         {% endif %}
@@ -185,7 +327,7 @@
 
                     <!---Następna-->
                     <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                        <a class="page-link" href="{{url_for('store.index', page=pagination.next_num) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
+                        <a class="page-link" href="{{url_for('store.index', page=pagination.next_num, order=request.args.get('order'), direction=request.args.get('direction')) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
                     </li>
                 </ul>
             </nav>
