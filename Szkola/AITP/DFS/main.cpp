@@ -7,7 +7,7 @@
 std::vector<std::pair<int, std::vector<int>>> build_graph(std::fstream& input){
     std::vector<std::pair<int, std::vector<int>>> graph;
     std::string line;
-
+    
     while(std::getline(input, line)){
         std::cout<<line<<std::endl;
         size_t colon_pos = line.find(':');
@@ -28,24 +28,22 @@ std::vector<std::pair<int, std::vector<int>>> build_graph(std::fstream& input){
     return graph;
 }
 
-std::vector<int> bfs(const std::vector<std::pair<int, std::vector<int>>>& graph, int start_node = 6){
+std::vector<int> dfs_iterative(const std::vector<std::pair<int, std::vector<int>>>& graph, int start_node = 1) {
     std::vector<int> visited;
-    std::vector<int> queue;
-    queue.push_back(start_node);
+    std::vector<int> stack;
+    stack.push_back(start_node);
 
-    while(!queue.empty()){
-        int current_node = queue.front();
-        queue.erase(queue.begin());
+    while (!stack.empty()) {
+        int current_node = stack.back();
+        stack.pop_back();
 
-        if(std::find(visited.begin(), visited.end(), current_node) == visited.end()){
+        if (std::find(visited.begin(), visited.end(), current_node) == visited.end()) {
             visited.push_back(current_node);
-            
-            for(const auto& [node, edges] : graph){
-                if(node == current_node){
-                    for(const auto& edge : edges){
-                        if(std::find(visited.begin(), visited.end(), edge) == visited.end()){
-                            queue.push_back(edge);
-                        }
+
+            for (const auto& [node, edges] : graph) {
+                if (node == current_node) {
+                    for (const auto& edge : edges) {
+                        stack.push_back(edge);
                     }
                     break;
                 }
@@ -57,24 +55,20 @@ std::vector<int> bfs(const std::vector<std::pair<int, std::vector<int>>>& graph,
 
 bool check_results(std::vector<std::pair<int, std::vector<int>>> gt, std::vector<int> visited){
     for(auto& [node,edges] : gt){
-        if(std::find(visited.begin(), visited.end(), node) == visited.end()) return false;
+        if(std::find(visited.begin(), visited.end(), node) == visited.end()) return false; 
     }
     return true;
 }
 
 
 int main(){
-    std::fstream input("bfs.txt", std::ios::in);
+    std::fstream input("dfs_1.txt", std::ios::in);
 
     std::vector<std::pair<int, std::vector<int>>> graph = build_graph(input);
 
-    std::vector<int> bfs_out = bfs(graph);
+    std::vector<int> dfs_out = dfs_iterative(graph);
 
-    for(int i=0;i<bfs_out.size(); i++){
-        std::cout<<bfs_out[i]<<std::endl;
-    }
-
-    bool result = check_results(graph, bfs_out);
+    bool result = check_results(graph, dfs_out);
     std::cout << result <<std::endl;
 
     return 0;
