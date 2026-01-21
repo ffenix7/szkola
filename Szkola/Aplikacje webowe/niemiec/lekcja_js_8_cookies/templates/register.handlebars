@@ -1,0 +1,15 @@
+<h1>Zarejestruj się</h1>
+
+<form method="post" action="/register">
+    <input type="email" name="email" placeholder="Email" value="{{email}}" /><br/>
+    <input type="password" name="password1" placeholder="Hasło" /><br/>
+    <input type="password" name="password2" placeholder="Powtórz hasło" /><br/>
+    <input type="text" name="country" placeholder="Kraj" value="{{country}}" /><br/>
+    <div id="countries"></div>
+    <button type="submit">Zarejestruj się</button>
+    <div id="email-error">{{error}}</div>
+</form>
+<p>Masz już konto? <a href="/login">Zaloguj się</a></p>
+
+
+<script type="module" src="/register_script.js"> </script>
