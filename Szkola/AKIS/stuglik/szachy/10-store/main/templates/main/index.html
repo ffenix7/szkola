@@ -1,0 +1,31 @@
+{% extends "bootstrap/base.html" %}
+
+{% block scripts %}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand mx-5" href="#">Turnieje szachowe</a>
+        </div>
+    </nav>
+    <div class="container mt-5 fade-in">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <a href="{{url_for('auth.login')}}" class="btn btn-primary w-100">Logowanie</a>
+            </div>
+            <div class="col-12 col-md-4">
+                <a href="{{url_for('auth.register')}}" class="btn btn-secondary w-100">Rejestracja</a>
+            </div>
+            <div class="col-12 col-md-4">
+                <a href="{{ url_for('tournaments.index') }}" class="btn btn-outline-success w-100">Przejdź do listy turniejów</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

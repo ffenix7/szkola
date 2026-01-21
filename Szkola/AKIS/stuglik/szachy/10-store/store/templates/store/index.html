@@ -1,0 +1,173 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block scripts %}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('auth.dashboard') }}">Panel</a>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted small">{{ current_user.email }}</span>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm">Wyloguj</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4 fade-in">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">Lista turniejów</h5>
+                <span class="text-muted small">Status: nierozpoczęty / trwa / zakończony</span>
+            </div>
+            {% if tournaments %}
+                <div class="list-group">
+                    {% for t in tournaments %}
+                        {% set status_class = 'secondary' %}
+                        {% if t.status == 'in_progress' %}
+                            {% set status_class = 'warning' %}
+                        {% elif t.status == 'finished' %}
+                            {% set status_class = 'success' %}
+                        {% endif %}
+                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                            <div class="me-3">
+                                <div class="fw-bold">{{ t.name }}</div>
+                                <div class="small text-muted">Kategoria: {{ t.category }} | Parowanie: {{ t.pairing_method }} | Runda: {{ t.current_round or 0 }}</div>
+                                <span class="badge bg-{{ status_class }} mt-1">{{ t.status }}</span>
+                            </div>
+                            <div class="text-end">
+                                <a href="{{ url_for('tournaments.detail', tournament_id=t.id) }}" class="btn btn-sm btn-primary mb-1">Otwórz</a>
+                                <form action="{{ url_for('tournaments.delete_tournament', tournament_id=t.id) }}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Usunąć ten turniej?');">Usuń</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">Brak turniejów. Dodaj nowy poniżej.</div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card mb-3">
+                <div class="card-header">Nowy turniej</div>
+                <div class="card-body">
+                    <form action="{{ url_for('tournaments.create_tournament') }}" method="post">
+                        {{ create_form.hidden_tag() }}
+                        <div class="mb-2">
+                            {{ create_form.name.label(class='form-label') }}
+                            {{ create_form.name(class='form-control') }}
+                        </div>
+                        <div class="mb-2">
+                            {{ create_form.category.label(class='form-label') }}
+                            {{ create_form.category(class='form-control') }}
+                        </div>
+                        <div class="mb-2">
+                            {{ create_form.selection_mode.label(class='form-label') }}
+                            {{ create_form.selection_mode(class='form-select') }}
+                        </div>
+                        <div class="mb-3">
+                            {{ create_form.pairing_method.label(class='form-label') }}
+                            {{ create_form.pairing_method(class='form-select') }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Utwórz turniej</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Dodaj zawodnika do puli</div>
+                <div class="card-body">
+                    <form action="{{ url_for('tournaments.add_player') }}" method="post">
+                        {{ player_form.hidden_tag() }}
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                {{ player_form.first_name.label(class='form-label') }}
+                                {{ player_form.first_name(class='form-control') }}
+                            </div>
+                            <div class="col-6">
+                                {{ player_form.last_name.label(class='form-label') }}
+                                {{ player_form.last_name(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            {{ player_form.email.label(class='form-label') }}
+                            {{ player_form.email(class='form-control') }}
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                {{ player_form.age.label(class='form-label') }}
+                                {{ player_form.age(class='form-control') }}
+                            </div>
+                            <div class="col-6">
+                                {{ player_form.ranking.label(class='form-label') }}
+                                {{ player_form.ranking(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ player_form.gender.label(class='form-label') }}
+                            {{ player_form.gender(class='form-select') }}
+                        </div>
+                        <button type="submit" class="btn btn-outline-secondary w-100">Dodaj zawodnika</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Pula zawodników</div>
+                <div class="card-body p-0">
+                    {% if players %}
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Imię i nazwisko</th>
+                                    <th>Wiek</th>
+                                    <th>Ranking</th>
+                                    <th>Kategoria</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in players %}
+                                    <tr>
+                                        <td>{{ p.id }}</td>
+                                        <td>{{ p.first_name }} {{ p.last_name }}</td>
+                                        <td>{{ p.age }}</td>
+                                        <td>{{ p.ranking }}</td>
+                                        <td>{{ p.gender }}</td>
+                                        <td>{{ p.email or '-' }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="p-3 text-muted">Brak zapisanych zawodników.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
