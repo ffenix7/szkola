@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Weather app</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <div class="container">
+      <header class="site-header">
+        <h1>Weather forecast</h1>
+        <p class="lead">Szybkie informacje pogodowe i jakość powietrza</p>
+      </header>
+
+      <form class="controls" method="post">
+        <label for="city">Choose a city:</label>
+        <div class="select-wrap">
+          <select name="city" id="city">
+            <option value="">-- select --</option>
+            {% for c in cities %}
+              <option value="{{ c }}" {% if selected==c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn" type="submit">Check weather</button>
+      </form>
+
+      {% if selected %}
+        <section class="card results">
+          <h2>Results for {{ selected }}</h2>
+          <div class="grid">
+            <div>
+              <h3>Weather</h3>
+              {% if weather %}
+                <p><strong>Temperature:</strong> {{ weather.get('temperatura') or 'N/A' }} °C</p>
+                <p><strong>Pressure:</strong> {{ weather.get('cisnienie') or 'N/A' }} hPa</p>
+              {% else %}
+                <p>Weather data: not available</p>
+              {% endif %}
+            </div>
+            <div>
+              <h3>Air quality</h3>
+              {% if air %}
+                <p><strong>Index (value):</strong> {{ air.get('Wartość indeksu') if air.get('Wartość indeksu') is not none else 'N/A' }}</p>
+                <p><strong>Index (category):</strong> {{ air.get('Nazwa kategorii indeksu') or 'N/A' }}</p>
+                {% set pm25_val = air.get('Wartość indeksu dla wskaźnika PM2.5') %}
+                {% set pm25_cat = air.get('Nazwa kategorii indeksu dla wskaźnika PM2.5') %}
+                <p><strong>PM2.5:</strong>
+                  {% if pm25_val is not none %}
+                    {{ pm25_val }}
+                  {% elif pm25_cat %}
+                    {{ pm25_cat }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </p>
+                {% set pm10_val = air.get('Wartość indeksu dla wskaźnika PM10') %}
+                {% set pm10_cat = air.get('Nazwa kategorii indeksu dla wskaźnika PM10') %}
+                <p><strong>PM10:</strong>
+                  {% if pm10_val is not none %}
+                    {{ pm10_val }}
+                  {% elif pm10_cat %}
+                    {{ pm10_cat }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </p>
+              {% else %}
+                <p>Air quality: not available</p>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+      {% endif %}
+    </div>
+  </body>
+</html>
