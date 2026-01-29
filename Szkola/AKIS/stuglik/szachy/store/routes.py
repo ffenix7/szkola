@@ -131,6 +131,10 @@ def detail(tournament_id):
     player_form = PlayerForm()
     edit_form = TournamentForm(obj=tournament)
 
+    all_players = None
+    if tournament.selection_mode == 'all' and tournament.status == 'not_started':
+        all_players = Player.query.order_by(Player.last_name, Player.first_name).all()
+
     if player_form.validate_on_submit():
         player = Player(
             first_name=player_form.first_name.data,
@@ -156,7 +160,8 @@ def detail(tournament_id):
         selection_form=selection_form,
         players=players,
         player_form=player_form,
-        edit_form=edit_form
+        edit_form=edit_form,
+        all_players=all_players
     )
 
 
@@ -193,7 +198,9 @@ def start_tournament(tournament_id):
         all_players = Player.query.order_by(Player.last_name, Player.first_name).all()
         _replace_participants(tournament, [p.id for p in all_players])
         db.session.flush()
-    active_ids = [p.player_id for p in tournament.participants]
+        active_ids = [p.id for p in all_players]
+    else:
+        active_ids = [p.player_id for p in tournament.participants if p.is_active]
     if len(active_ids) < 2:
         flash('Potrzeba co najmniej dwóch uczestników, aby rozpocząć turniej.', 'warning')
         return redirect(url_for('tournaments.detail', tournament_id=tournament.id))

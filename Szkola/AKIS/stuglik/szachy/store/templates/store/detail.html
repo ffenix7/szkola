@@ -56,12 +56,10 @@
                         <div class="mb-2">
                             {{ edit_form.selection_mode.label(class='form-label') }}
                             {{ edit_form.selection_mode(class='form-select') }}
-                            <div class="form-text">all = wszyscy, selected = wybierasz ręcznie</div>
                         </div>
                         <div class="mb-3">
                             {{ edit_form.pairing_method.label(class='form-label') }}
                             {{ edit_form.pairing_method(class='form-select') }}
-                            <div class="form-text">Parowanie: nazwisko / wiek / ranking.</div>
                         </div>
                         <button type="submit" class="btn btn-outline-primary w-100">Zapisz zmiany</button>
                     </form>
@@ -85,8 +83,6 @@
                             <div class="form-text">Zaznacz zawodników, którzy biorą udział.</div>
                             <button type="submit" class="btn btn-outline-secondary mt-2">Zapisz uczestników</button>
                         </form>
-                    {% else %}
-                        <div class="alert alert-info">Wszyscy zapisani zawodnicy zostaną dodani automatycznie przy starcie.</div>
                     {% endif %}
 
                     <div class="table-responsive">
@@ -101,23 +97,37 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for participant in tournament.participants %}
-                                    <tr>
-                                        <td>{{ participant.player.id }}</td>
-                                        <td>{{ participant.player.full_name() }}</td>
-                                        <td>{{ participant.player.age }}</td>
-                                        <td>{{ participant.player.ranking }}</td>
-                                        <td>
-                                            {% if participant.is_active %}
-                                                <span class="badge bg-success">w grze</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary">odpadł</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
+                                {% if all_players %}
+                                    {% for player in all_players %}
+                                        <tr>
+                                            <td>{{ player.id }}</td>
+                                            <td>{{ player.full_name() }}</td>
+                                            <td>{{ player.age }}</td>
+                                            <td>{{ player.ranking }}</td>
+                                            <td><span class="badge bg-success">w grze</span></td>
+                                        </tr>
+                                    {% else %}
+                                        <tr><td colspan="5" class="text-muted">Brak zawodników w puli.</td></tr>
+                                    {% endfor %}
                                 {% else %}
-                                    <tr><td colspan="5" class="text-muted">Brak przypisanych zawodników.</td></tr>
-                                {% endfor %}
+                                    {% for participant in tournament.participants %}
+                                        <tr>
+                                            <td>{{ participant.player.id }}</td>
+                                            <td>{{ participant.player.full_name() }}</td>
+                                            <td>{{ participant.player.age }}</td>
+                                            <td>{{ participant.player.ranking }}</td>
+                                            <td>
+                                                {% if participant.is_active %}
+                                                    <span class="badge bg-success">w grze</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">odpadł</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr><td colspan="5" class="text-muted">Brak przypisanych zawodników.</td></tr>
+                                    {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -162,7 +172,7 @@
                                                     <tr>
                                                         <td>{{ match.board_number }}</td>
                                                         <td>{{ match.white_player.full_name() }}</td>
-                                                        <td>{{ match.black_player.full_name() if match.black_player else 'wolny los' }}</td>
+                                                        <td>{{ match.black_player.full_name() if match.black_player else 'Wolny gracz' }}</td>
                                                         <td>
                                                             {% if match.result == 'pending' %}
                                                                 <select name="result_{{ match.id }}" class="form-select form-select-sm" {% if match.black_player is none %}disabled{% endif %}>
@@ -177,7 +187,7 @@
                                                             {% elif match.result == 'black' %}
                                                                 <span class="badge bg-success">Wygrywa {{ match.black_player.full_name() }}</span>
                                                             {% elif match.result == 'bye' %}
-                                                                <span class="badge bg-info">Wolny los - przechodzi {{ match.white_player.full_name() }}</span>
+                                                                <span class="badge bg-info">Wolny gracz - przechodzi {{ match.white_player.full_name() }}</span>
                                                             {% endif %}
                                                         </td>
                                                     </tr>
