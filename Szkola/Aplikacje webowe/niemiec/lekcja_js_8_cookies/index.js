@@ -33,26 +33,32 @@ app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req,res) => {
     const session_id = req.cookies.session_id;
-    if(session_json.some(s => s.session_id === session_id)) {
-        let email = null;
-        if (session_json.some(s => s.session_id === req.cookies.session_id)) {
-            email = session_json.find(s => s.session_id === req.cookies.session_id).email;
-        }
-        return res.render('home', { email } );
+    let email;
+    const session = session_json.find(s => s.session_id === session_id);
+    if (session && session.email !== undefined) {
+        email = session.email;
+        res.render('home', { email });
+    } else {
+        res.render('home');
     }
-    res.render('home');
 })
 
 app.get('/dashboard', (req,res)=>{
     const session_id = req.cookies.session_id;
-    if(session_json.some(s => s.session_id === session_id)) {
-        let email = null;
-        if (session_json.some(s => s.session_id === req.cookies.session_id)) {
-            email = session_json.find(s => s.session_id === req.cookies.session_id).email;
-        }
-        return res.render('dashboard', { email } );
+    let email;
+    let count = parseInt(req.cookies.counter) || 0;
+    count += 1
+    console.log(count)
+    const session = session_json.find(s => s.session_id === session_id);
+    if (session && session.email !== undefined) {
+        email = session.email;
+        res.cookie('counter', count,{
+            httpOnly: true,
+        })
+        res.render('dashboard', { count });
+    } else {
+        res.render('login');
     }
-    return res.render('login')
 })
 
 app.get('/register', (req,res) => {
@@ -111,6 +117,9 @@ app.post('/login', (req,res) => {
             res.cookie('session_id', session_id, {
                 httpOnly: true,
             });
+            res.cookie('counter', 0, {
+                httpOnly: true,
+            })
             return res.render('dashboard', { email });
         }
         else{
@@ -126,6 +135,7 @@ app.get('/logout', (req,res) => {
     session_json = session_json.filter(s => s.session_id !== session_id);
     fs.writeFileSync(sessionPath, JSON.stringify(session_json, null, 2), 'utf-8');
     res.clearCookie('session_id');
+    res.clearCookie('counter');
     res.redirect('/login');
 });
 
