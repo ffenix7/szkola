@@ -1,5 +1,58 @@
 {% extends 'bootstrap/base.html' %}
 
+{% block scripts %}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const root = document.querySelector('[data-bracket-root]');
+            const svg = document.querySelector('[data-bracket-svg]');
+            if (!root || !svg) return;
+
+            const draw = () => {
+                while (svg.firstChild) {
+                    svg.removeChild(svg.firstChild);
+                }
+
+                const rootRect = root.getBoundingClientRect();
+                svg.setAttribute('width', String(Math.max(root.scrollWidth, root.clientWidth)));
+                svg.setAttribute('height', String(Math.max(root.scrollHeight, root.clientHeight)));
+
+                const rounds = Number(root.dataset.rounds || 0);
+                for (let round = 1; round < rounds; round++) {
+                    const fromMatches = root.querySelectorAll(`[data-round="${round}"]`);
+                    fromMatches.forEach((fromEl, idx) => {
+                        const targetIdx = Math.floor(idx / 2);
+                        const toEl = root.querySelector(`[data-round="${round + 1}"][data-index="${targetIdx}"]`);
+                        if (!toEl) return;
+
+                        const fromRect = fromEl.getBoundingClientRect();
+                        const toRect = toEl.getBoundingClientRect();
+
+                        const x1 = fromRect.right - rootRect.left;
+                        const y1 = fromRect.top + fromRect.height / 2 - rootRect.top;
+                        const x2 = toRect.left - rootRect.left;
+                        const y2 = toRect.top + toRect.height / 2 - rootRect.top;
+                        const midX = x1 + (x2 - x1) * 0.45;
+
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        path.setAttribute('d', `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`);
+                        path.setAttribute('stroke', '#8f98ab');
+                        path.setAttribute('stroke-width', '2');
+                        path.setAttribute('fill', 'none');
+                        path.setAttribute('stroke-linecap', 'round');
+                        path.setAttribute('stroke-linejoin', 'round');
+                        svg.appendChild(path);
+                    });
+                }
+            };
+
+            draw();
+            window.addEventListener('resize', draw);
+        });
+    </script>
+{% endblock %}
+
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
@@ -34,6 +87,58 @@
     {% elif tournament.status == 'finished' %}
         {% set status_class = 'success' %}
     {% endif %}
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card mb-3">
+                <div class="card-header">Drzewko rozgrywek</div>
+                <div class="card-body">
+                    {% set rounds = tournament.rounds %}
+                    <div class="tournament-bracket" data-bracket-root data-rounds="{{ rounds|length if rounds else 0 }}">
+                        {% if rounds %}
+                            <div class="tournament-bracket__board">
+                                {% for round_obj in rounds %}
+                                    {% set spacing = 26 * (2 ** (round_obj.number - 1)) %}
+                                    {% set offset = (spacing // 2) if round_obj.number > 1 else 0 %}
+                                    <div class="tournament-bracket__round">
+                                        <div class="tournament-bracket__title">Runda {{ round_obj.number }}</div>
+                                        <div class="tournament-bracket__matches" style="padding-top: {{ offset }}px;">
+                                        {% for match in round_obj.matches %}
+                                            <div class="tournament-bracket__match" data-round="{{ round_obj.number }}" data-index="{{ loop.index0 }}" style="margin-bottom: {% if not loop.last %}{{ spacing }}px{% else %}0{% endif %};">
+                                                <div class="tournament-bracket__player tournament-bracket__player--top">
+                                                    {{ match.white_player.full_name() }}
+                                                    {% if match.result == 'white' %}<span class="tournament-bracket__winner">🏆</span>{% endif %}
+                                                </div>
+                                                <div class="tournament-bracket__player tournament-bracket__player--bottom">
+                                                    {{ match.black_player.full_name() if match.black_player else 'Wolny gracz' }}
+                                                    {% if match.result == 'black' %}<span class="tournament-bracket__winner">🏆</span>{% endif %}
+                                                </div>
+                                                <div class="tournament-bracket__result">
+                                                    {% if match.result == 'pending' %}
+                                                        <span class="badge bg-secondary">?</span>
+                                                    {% elif match.result == 'white' %}
+                                                        <span class="badge bg-success">Wygrywa białe</span>
+                                                    {% elif match.result == 'black' %}
+                                                        <span class="badge bg-success">Wygrywa czarne</span>
+                                                    {% elif match.result == 'bye' %}
+                                                        <span class="badge bg-info">Przechodzi</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <svg class="tournament-bracket__svg" data-bracket-svg></svg>
+                        {% else %}
+                            <div class="text-muted">Brak rund. Rozpocznij turniej, aby wygenerować drzewko.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row g-4">
         <div class="col-lg-6">
@@ -136,73 +241,6 @@
                         <form action="{{ url_for('tournaments.start_tournament', tournament_id=tournament.id) }}" method="post" class="mt-3">
                             <button type="submit" class="btn btn-primary w-100">Rozpocznij turniej</button>
                         </form>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">Rundy i pary</div>
-                <div class="card-body">
-                    {% if tournament.rounds %}
-                        {% for round_obj in tournament.rounds %}
-                            {% set round_class = 'secondary' %}
-                            {% if round_obj.status == 'completed' %}
-                                {% set round_class = 'success' %}
-                            {% endif %}
-                            <div class="border rounded p-3 mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <strong>Runda {{ round_obj.number }}</strong>
-                                    <span class="badge bg-{{ round_class }}">{{ round_obj.status }}</span>
-                                </div>
-                                <form action="{{ url_for('tournaments.submit_results', tournament_id=tournament.id, round_id=round_obj.id) }}" method="post">
-                                    <div class="table-responsive">
-                                        <table class="table table-sm align-middle">
-                                            <thead>
-                                                <tr>
-                                                    <th>Stolik</th>
-                                                    <th>Białe</th>
-                                                    <th>Czarne</th>
-                                                    <th>Wynik</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for match in round_obj.matches %}
-                                                    <tr>
-                                                        <td>{{ match.board_number }}</td>
-                                                        <td>{{ match.white_player.full_name() }}</td>
-                                                        <td>{{ match.black_player.full_name() if match.black_player else 'Wolny gracz' }}</td>
-                                                        <td>
-                                                            {% if match.result == 'pending' %}
-                                                                <select name="result_{{ match.id }}" class="form-select form-select-sm" {% if match.black_player is none %}disabled{% endif %}>
-                                                                    <option value="">Wybierz</option>
-                                                                    <option value="white">Wygrywa {{ match.white_player.full_name() }}</option>
-                                                                    {% if match.black_player %}
-                                                                        <option value="black">Wygrywa {{ match.black_player.full_name() }}</option>
-                                                                    {% endif %}
-                                                                </select>
-                                                            {% elif match.result == 'white' %}
-                                                                <span class="badge bg-success">Wygrywa {{ match.white_player.full_name() }}</span>
-                                                            {% elif match.result == 'black' %}
-                                                                <span class="badge bg-success">Wygrywa {{ match.black_player.full_name() }}</span>
-                                                            {% elif match.result == 'bye' %}
-                                                                <span class="badge bg-info">Wolny gracz - przechodzi {{ match.white_player.full_name() }}</span>
-                                                            {% endif %}
-                                                        </td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    {% if round_obj.status == 'pending' and tournament.status != 'finished' %}
-                                        <button type="submit" class="btn btn-primary btn-sm">Zapisz wyniki i generuj kolejną rundę</button>
-                                    {% endif %}
-                                </form>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="text-muted">Brak rund. Rozpocznij turniej, aby wygenerować pary.</div>
                     {% endif %}
                 </div>
             </div>
