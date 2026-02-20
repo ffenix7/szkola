@@ -15,6 +15,8 @@
       <Link to="/countries" class="mr-5 hover:text-gray-900">COUNTRIES</Link>
       <Link to="/colorpicker" class="mr-5 hover:text-gray-900">COLORPICKER</Link>
       <Link to="/quiz" class="mr-5 hover:text-gray-900">Quiz</Link>
+      <Link to="/quiz2" class="mr-5 hover:text-gray-900">Pokequiz</Link>
+      <Link to="/pokedex" class="mr-5 hover:text-gray-900">Pokedex</Link>
       <Link to="/jokes" class="mr-5 hover:text-gray-900">Jokes</Link>
     </nav>
     <button class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Button

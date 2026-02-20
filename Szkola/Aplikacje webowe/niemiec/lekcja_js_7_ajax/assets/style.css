@@ -1,0 +1,18 @@
+body{
+    background-color: rgb(188, 192, 196);
+    color: #222;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+label{
+    display: block;
+}
+
+input{
+    background-color: rgb(153, 161, 168);
+    border: 0;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 5px;
+    outline: none;
+}

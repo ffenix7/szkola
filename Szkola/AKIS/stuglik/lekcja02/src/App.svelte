@@ -7,6 +7,8 @@
   import Jokes from '../routes/Jokes.svelte';
   import NotFound from '../routes/NotFound.svelte';
   import Index from '../routes/Index.svelte';
+  import Pokedex from '../routes/Pokedex.svelte';
+  import Pokeinfo from '../routes/Pokeinfo.svelte';
   import { Router, Link, Route } from "svelte-routing";
   export let url = "";
   
@@ -26,6 +28,9 @@
     <Route path="/jokes"><Jokes /></Route>
     <Route path="/quiz"><Quiz /></Route>
     <Route path="/quiz2"><Quiz2 /></Route>
+    <Route path="/pokedex"><Pokedex /></Route>
+    <Route path="/pokeinfo"><Pokeinfo /></Route>
+
     <Route path="/*"><NotFound /></Route>
 
 </Router>

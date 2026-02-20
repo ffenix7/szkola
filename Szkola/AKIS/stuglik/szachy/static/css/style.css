@@ -1,0 +1,409 @@
+.bracket-tree {
+    overflow-x: auto;
+    padding: 1rem 0;
+    background: linear-gradient(90deg, #f8f9fa 0%, #e0eafc 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(52,152,219,0.08);
+    min-height: 220px;
+}
+.bracket-flex {
+    display: flex;
+    gap: 2rem;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+.bracket-round {
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    position: relative;
+}
+.bracket-title {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #2980b9;
+    background: #eaf6ff;
+    border-radius: 8px;
+    padding: 0.3rem 0;
+    box-shadow: 0 1px 3px rgba(52,152,219,0.07);
+}
+.bracket-match {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(44,62,80,0.07);
+    padding: 0.7rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    border-left: 4px solid #3498db;
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+.bracket-match:not(:last-child)::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    width: 24px;
+    height: 2px;
+    background: #3498db;
+    z-index: 1;
+}
+.bracket-player {
+    font-size: 1em;
+    font-weight: 500;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    background: #f4f6fa;
+    margin-bottom: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.bracket-white { color: #2c3e50; }
+.bracket-black { color: #7f8c8d; }
+.bracket-result {
+    text-align: center;
+    font-size: 0.9em;
+    margin-top: 0.2rem;
+}
+.winner {
+    color: #e67e22;
+    font-size: 1.2em;
+    margin-left: 0.3em;
+}
+/* Bracket tree styling */
+.bracket-tree {
+    overflow-x: auto;
+    padding: 1rem 0;
+    background: linear-gradient(90deg, #f8f9fa 0%, #e0eafc 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(52,152,219,0.08);
+}
+.bracket-flex {
+    display: flex;
+    gap: 2rem;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+.bracket-round {
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.bracket-title {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #2980b9;
+    background: #eaf6ff;
+    border-radius: 8px;
+    padding: 0.3rem 0;
+    box-shadow: 0 1px 3px rgba(52,152,219,0.07);
+}
+.bracket-match {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(44,62,80,0.07);
+    padding: 0.7rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    border-left: 4px solid #3498db;
+    position: relative;
+}
+.bracket-player {
+    font-size: 1em;
+    font-weight: 500;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    background: #f4f6fa;
+    margin-bottom: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.bracket-white { color: #2c3e50; }
+.bracket-black { color: #7f8c8d; }
+.bracket-result {
+    text-align: center;
+    font-size: 0.9em;
+    margin-top: 0.2rem;
+}
+.winner {
+    color: #e67e22;
+    font-size: 1.2em;
+    margin-left: 0.3em;
+}
+/* General body styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+/* Navbar styling */
+.navbar {
+    background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-bottom: 3px solid #e74c3c;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #ecf0f1 !important;
+}
+
+.navbar .nav-item {
+    color: #bdc3c7;
+}
+
+/* Container styling */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Card styling */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Button styling */
+.btn {
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #e74c3c 0%, #c0392b 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #c0392b 0%, #a93226 100%);
+    transform: scale(1.05);
+}
+
+.btn-outline-secondary {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.btn-outline-secondary:hover {
+    background: #3498db;
+    border-color: #3498db;
+}
+
+.btn-outline-danger {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.btn-outline-danger:hover {
+    background: #e74c3c;
+    border-color: #e74c3c;
+}
+
+/* Table styling */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.table thead th {
+    background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+.table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #ecf0f1;
+}
+
+/* Form styling */
+.form-control {
+    border-radius: 10px;
+    border: 2px solid #bdc3c7;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.form-select {
+    border-radius: 10px;
+}
+
+/* Alert styling */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Badge styling */
+.badge {
+    border-radius: 20px;
+    font-size: 0.8em;
+}
+
+/* List group styling */
+.list-group-item {
+    border-radius: 10px !important;
+    margin-bottom: 10px;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.list-group-item:hover {
+    transform: translateX(5px);
+}
+
+/* Tournament status badges */
+.badge.bg-secondary { background: linear-gradient(45deg, #95a5a6 0%, #7f8c8d 100%) !important; }
+.badge.bg-warning { background: linear-gradient(45deg, #f39c12 0%, #e67e22 100%) !important; }
+.badge.bg-success { background: linear-gradient(45deg, #27ae60 0%, #229954 100%) !important; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Chess-themed colors */
+.chess-primary { color: #2c3e50; }
+.chess-secondary { color: #34495e; }
+.chess-accent { color: #e74c3c; }
+
+/* Animation for loading */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Tournament bracket (single elimination) */
+.tournament-bracket {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1rem;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #1d2331 0%, #212a3a 100%);
+    min-height: 220px;
+}
+
+.tournament-bracket__board {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 3.5rem;
+    min-width: max-content;
+    z-index: 2;
+}
+
+.tournament-bracket__round {
+    min-width: 230px;
+}
+
+.tournament-bracket__title {
+    color: #c8d3ea;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+}
+
+.tournament-bracket__matches {
+    display: flex;
+    flex-direction: column;
+}
+
+.tournament-bracket__match {
+    position: relative;
+    width: 210px;
+    border-radius: 8px;
+    background: #3b4252;
+    border: 1px solid #5c6579;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+    color: #e8ecf5;
+    overflow: hidden;
+}
+
+.tournament-bracket__player {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.32rem 0.55rem;
+    font-size: 0.88rem;
+    line-height: 1.1;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.tournament-bracket__player--top {
+    border-bottom: 1px solid #616b81;
+}
+
+.tournament-bracket__player--bottom {
+    color: #d3daea;
+}
+
+.tournament-bracket__result {
+    padding: 0.25rem 0.5rem 0.4rem;
+}
+
+.tournament-bracket__winner {
+    margin-left: 0.45rem;
+}
+
+.tournament-bracket__svg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}

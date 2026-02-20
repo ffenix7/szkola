@@ -1,0 +1,64 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block scripts %}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block content %}
+
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand mx-5" href="{{url_for('auth.dashboard')}}">Home</a>
+            <ul class="nav justify-content=end">
+                <li class="nav-item"> Użytkownik, {{current_user.email}}</li>
+            </ul>
+            <a href="{{url_for('auth.logout')}}" class="btn btn-danger">Wyloguj</a>
+        </div>
+    </nav>
+    
+    <div class="container mt-4 fade-in">
+        <div class="col-lg-12">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %} 
+                        <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                            {{message}}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-4">
+                <div class="card border">
+                    <div class="card-header">Turnieje szachowe</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Zarządzaj turniejami</h5>
+                        <p class="card-text">Twórz nowe turnieje, przeglądaj istniejące, zarządzaj rundami i meczami.</p>
+                    </div>
+                    <div class="card-footer bg-transparent border">
+                        <a href="{{url_for('tournaments.index')}}" class="btn btn-sm btn-outline-secondary float-end">Wejdź</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border">
+                    <div class="card-header">Pula zawodników</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Zarządzaj zawodnikami</h5>
+                        <p class="card-text">Dodawaj nowych zawodników, przeglądaj ich rankingi i informacje.</p>
+                    </div>
+                    <div class="card-footer bg-transparent border">
+                        <a href="{{url_for('tournaments.index')}}" class="btn btn-sm btn-outline-secondary float-end">Wejdź</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

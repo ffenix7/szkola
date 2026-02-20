@@ -12,6 +12,7 @@
 
 {% block content %}
 
+    <!---Navbar-->
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand mx-5" href="{{url_for('auth.dashboard')}}">Home</a>
@@ -22,6 +23,7 @@
         </div>
     </nav>
     
+    <!---Flash messages -->
     <div class="container mt-4">
         <div class="col-lg-12">
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -36,38 +38,113 @@
             {% endwith %}
         </div>
 
+        <!--Search and add button-->
         <div class="row mx-5 justify-content-end">
             <div class="col-auto">
                 <form action="{{url_for('store.index')}}" method="GET">
                     <div class="input-group input-group-sm">
-                        <a href="{{url_for('store.index')}}" class="btn btn-sm btn-outline-secondary">Wyczyść</a>
-                        <input type="text" name="search" class="form-control" placeholder="Szukaj..." value="{{search_query}}">
+                        <input type="hidden" name="order" value="{{ request.args.get('order', '') }}">
+                        <input type="hidden" name="direction" value="{{ request.args.get('direction', '') }}">
+                        <a href="{{url_for('store.index', order=request.args.get('order'), direction=request.args.get('direction'))}}" class="btn btn-sm btn-outline-secondary">Wyczyść</a>
+                        <input type="text" name="search" class="form-control" placeholder="Szukaj..." value="{{search}}">
                         <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-search"></i></button>
                     </div>
                 </form>
             </div>
             <div class="col-auto">
-                <a href="#" class="btn btn-sm btn-outline-success mx-1">Dodaj produkt</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#add-product-modal" class="btn btn-sm btn-outline-success mx-1">Dodaj produkt(modal)</a>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#import-modal" class="btn btn-sm btn-outline-success mx-1">Importuj</a>
+                <a href="{{ url_for('store.export_data') }}" class="btn btn-sm btn-outline-primary mx-1">Exportuj CSV</a>
             </div>
         </div>
 
+        <!---Table contents-->
         {% if search %}
         <div class="row mx-5">
             <h5 class="border-bottom">Znalezione produkty</h5>
             <table class="table table-hover mt-1">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Symbol</th>
-                        <th scope="col">Nazwa</th>
-                        <th scope="col">Kategoria</th>
-                        <th scope="col">Producent</th>
-                        <th scope="col">Model</th>
-                        <th scope="col">Ilość</th>
-                        <th scope="col">Waga (kg)</th>
-                        <th scope="col">Cena netto</th>
-                        <th scope="col">Wartość</th>
+                        <th scope="col">
+                            <a href="?order=id&direction={{ 'asc' if request.args.get('order') == 'id' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                ID
+                                {% if request.args.get('order') == 'id' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=symbol&direction={{ 'asc' if request.args.get('order') == 'symbol' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Symbol
+                                {% if request.args.get('order') == 'symbol' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=item_name&direction={{ 'asc' if request.args.get('order') == 'item_name' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Nazwa
+                                {% if request.args.get('order') == 'item_name' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=category&direction={{ 'asc' if request.args.get('order') == 'category' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Kategoria
+                                {% if request.args.get('order') == 'category' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=brand&direction={{ 'asc' if request.args.get('order') == 'brand' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Producent
+                                {% if request.args.get('order') == 'brand' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=model&direction={{ 'asc' if request.args.get('order') == 'model' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Model
+                                {% if request.args.get('order') == 'model' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=quantity&direction={{ 'asc' if request.args.get('order') == 'quantity' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Ilość
+                                {% if request.args.get('order') == 'quantity' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=weight_kg&direction={{ 'asc' if request.args.get('order') == 'weight_kg' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Waga (kg)
+                                {% if request.args.get('order') == 'weight_kg' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=price_pln&direction={{ 'asc' if request.args.get('order') == 'price_pln' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Cena netto
+                                {% if request.args.get('order') == 'price_pln' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=inventory_value_pln&direction={{ 'asc' if request.args.get('order') == 'inventory_value_pln' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Wartość
+                                {% if request.args.get('order') == 'inventory_value_pln' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th scope="col" class="text-end">Edycja</th>
                     </tr>
                 </thead>
@@ -76,17 +153,18 @@
                     <tr>
                         <td>{{ record.id }}</td>
                         <td>{{ record.symbol }}</td>
-                        <td>{{ record.name }}</td>
+                        <td>{{ record.item_name }}</td>
                         <td>{{ record.category }}</td>
                         <td>{{ record.brand }}</td>
                         <td>{{ record.model }}</td>
+                        <td>{{ record.quantity }}</td>
                         <td>{{ record.weight_kg }}</td>
                         <td>{{ record.price_pln }}</td>
                         <td>{{ record.inventory_value_pln }}</td>
                         <td class="text-end">
-                            <a href="#" class="text-primary"><i class="bi-card-text"></i></a>
-                            <a href="#" class="text-warning mx-2"><i class="bi-pencil-square"></i></a>
-                            <a href="#" class="text-danger"><i class="bi-trash"></i></a>
+                            <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#info-modal-{{record.id}}"><i class="bi-card-text"></i></a>
+                            <a href="#" class="text-warning mx-2" data-bs-toggle="modal" data-bs-target="#edit-product-modal-{{record.id}}"><i class="bi-pencil-square"></i></a>
+                            <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#delete-product-modal-{{record.id}}"><i class="bi-trash"></i></a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -102,12 +180,12 @@
                 <ul class="pagination justify-content-center">
                     <!---Poprzednia-->
                     <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                        <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num, search=search) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
+                        <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num, search=search, order=request.args.get('order'), direction=request.args.get('direction')) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
                     </li>
                     <!---Numery stron-->
                     {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
                         {% if p %}
-                            <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p, search=search) }}">{{ p }}</a></li>
+                            <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p, search=search, order=request.args.get('order'), direction=request.args.get('direction')) }}">{{ p }}</a></li>
                         {% else %}
                             <li class="page-item disabled"><span class="page-link">...</span></li>
                         {% endif %}
@@ -115,7 +193,7 @@
 
                     <!---Następna-->
                     <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                        <a class="page-link" href="{{url_for('store.index', page=pagination.next_num, search=search) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
+                        <a class="page-link" href="{{url_for('store.index', page=pagination.next_num, search=search, order=request.args.get('order'), direction=request.args.get('direction')) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
                     </li>
                 </ul>
             </nav>
@@ -126,16 +204,86 @@
             <table class="table table-hover mt-1">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Symbol</th>
-                        <th scope="col">Nazwa</th>
-                        <th scope="col">Kategoria</th>
-                        <th scope="col">Producent</th>
-                        <th scope="col">Model</th>
-                        <th scope="col">Ilość</th>
-                        <th scope="col">Waga (kg)</th>
-                        <th scope="col">Cena netto</th>
-                        <th scope="col">Wartość</th>
+                        <th scope="col">
+                            <a href="?order=id&direction={{ 'asc' if request.args.get('order') == 'id' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                ID
+                                {% if request.args.get('order') == 'id' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=symbol&direction={{ 'asc' if request.args.get('order') == 'symbol' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Symbol
+                                {% if request.args.get('order') == 'symbol' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=item_name&direction={{ 'asc' if request.args.get('order') == 'item_name' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Nazwa
+                                {% if request.args.get('order') == 'item_name' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=category&direction={{ 'asc' if request.args.get('order') == 'category' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Kategoria
+                                {% if request.args.get('order') == 'category' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=brand&direction={{ 'asc' if request.args.get('order') == 'brand' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Producent
+                                {% if request.args.get('order') == 'brand' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=model&direction={{ 'asc' if request.args.get('order') == 'model' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Model
+                                {% if request.args.get('order') == 'model' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=quantity&direction={{ 'asc' if request.args.get('order') == 'quantity' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Ilość
+                                {% if request.args.get('order') == 'quantity' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=weight_kg&direction={{ 'asc' if request.args.get('order') == 'weight_kg' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Waga (kg)
+                                {% if request.args.get('order') == 'weight_kg' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=price_pln&direction={{ 'asc' if request.args.get('order') == 'price_pln' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Cena netto
+                                {% if request.args.get('order') == 'price_pln' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="?order=inventory_value_pln&direction={{ 'asc' if request.args.get('order') == 'inventory_value_pln' and request.args.get('direction') == 'desc' else 'desc' }}&search={{ search }}">
+                                Wartość
+                                {% if request.args.get('order') == 'inventory_value_pln' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direction') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th scope="col" class="text-end">Edycja</th>
                     </tr>
                 </thead>
@@ -144,33 +292,34 @@
                     <tr>
                         <td>{{ record.id }}</td>
                         <td>{{ record.symbol }}</td>
-                        <td>{{ record.name }}</td>
+                        <td>{{ record.item_name }}</td>
                         <td>{{ record.category }}</td>
                         <td>{{ record.brand }}</td>
                         <td>{{ record.model }}</td>
+                        <td>{{ record.quantity }}</td>
                         <td>{{ record.weight_kg }}</td>
                         <td>{{ record.price_pln }}</td>
                         <td>{{ record.inventory_value_pln }}</td>
                         <td class="text-end">
-                            <a href="#" class="text-primary"><i class="bi-card-text"></i></a>
-                            <a href="#" class="text-warning mx-2"><i class="bi-pencil-square"></i></a>
-                            <a href="#" class="text-danger"><i class="bi-trash"></i></a>
+                            <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#info-modal-{{record.id}}"><i class="bi-card-text"></i></a>
+                            <a href="#" class="text-warning mx-2" data-bs-toggle="modal" data-bs-target="#edit-product-modal-{{record.id}}"><i class="bi-pencil-square"></i></a>
+                            <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#delete-product-modal-{{record.id}}"><i class="bi-trash"></i></a>
                         </td>
                     </tr>
                     {% endfor %}
-                </tbody>
+                </tbody>    
             </table>
             <!---pagination-->
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
                     <!---Poprzednia-->
                     <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                        <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
+                        <a class="page-link" href="{{url_for('store.index', page=pagination.prev_num, order=request.args.get('order'), direction=request.args.get('direction')) if pagination.has_prev else '#'}}" aria-label="Previous">Prev</a>
                     </li>
                     <!---Numery stron-->
                     {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
                         {% if p %}
-                            <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p) }}">{{ p }}</a></li>
+                            <li class="page-item {% if p == pagination.page %} active {% endif %}"><a class="page-link" href="{{ url_for('store.index', page=p, order=request.args.get('order'), direction=request.args.get('direction')) }}">{{ p }}</a></li>
                         {% else %}
                             <li class="page-item disabled"><span class="page-link">...</span></li>
                         {% endif %}
@@ -178,7 +327,7 @@
 
                     <!---Następna-->
                     <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                        <a class="page-link" href="{{url_for('store.index', page=pagination.next_num) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
+                        <a class="page-link" href="{{url_for('store.index', page=pagination.next_num, order=request.args.get('order'), direction=request.args.get('direction')) if pagination.has_next else '#'}}" aria-label="Next">Next</a>
                     </li>
                 </ul>
             </nav>
@@ -206,5 +355,205 @@
             </div>
         </div>
 
-    </div>
+        <!--- add-product-modal -->
+        <div class="modal fade" id="add-product-modal" tabindex="-1" aria-labelledby="add-product-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="add-product-modal-label">Dodaj nowy produkt</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ url_for('store.add_product') }}" method="post">
+                        {{ add_product_form.hidden_tag() }}
+                        <div class="modal-body">
+                            <div class="form-group">
+                                {{ add_product_form.symbol.label(class="form-label") }}
+                                {{ add_product_form.symbol(class="form-control", id="symbol") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.item_name.label(class="form-label") }}
+                                {{ add_product_form.item_name(class="form-control", id="item_name") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.category.label(class="form-label") }}
+                                {{ add_product_form.category(class="form-control", id="category") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.brand.label(class="form-label") }}
+                                {{ add_product_form.brand(class="form-control", id="brand") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.model.label(class="form-label") }}
+                                {{ add_product_form.model(class="form-control", id="model") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.weight_kg.label(class="form-label") }}
+                                {{ add_product_form.weight_kg(class="form-control", id="weight_kg") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.price_pln.label(class="form-label") }}
+                                {{ add_product_form.price_pln(class="form-control", id="price_pln") }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ add_product_form.quantity.label(class="form-label") }}
+                                {{ add_product_form.quantity(class="form-control", id="quantity") }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Anuluj</button>
+                            {{ add_product_form.submit(class="btn btn-success btn-sm") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- info-modal -->
+        {% for record in records %}
+            <div class="modal fade" id="info-modal-{{record.id}}" tabindex="-1" aria-labelledby="info-modal-label-{{record.id}}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light">
+                            <div>
+                                <h5 class="modal-title" id="info-modal-label-{{record.id}}">{{ record.item_name }}</h5>
+                                <small class="text-muted">ID: {{ record.id }} &nbsp;•&nbsp; Symbol: <span class="badge bg-secondary">{{ record.symbol }}</span></small>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6 class="mb-2">Szczegóły</h6>
+                                    <table class="table table-borderless table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th class="w-25">Kategoria</th>
+                                                <td>{{ record.category or '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Producent</th>
+                                                <td>{{ record.brand or '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Model</th>
+                                                <td>{{ record.model or '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Ilość</th>
+                                                <td>{{ record.quantity }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Waga (kg)</th>
+                                                <td>{{ '%.3f' % record.weight_kg if record.weight_kg is not none else '-' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-4 border-start">
+                                    <h6 class="mb-2">Cena i wartość</h6>
+                                    <div class="d-flex flex-column gap-2">
+                                        <div>
+                                            <small class="text-muted">Cena netto</small>
+                                            <div class="fs-5 fw-bold">{{ '%.2f' % record.price_pln }} PLN</div>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted">Wartość magazynowa</small>
+                                            <div class="fs-6">{{ '%.2f' % record.inventory_value_pln }} PLN</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Zamknij</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!--- edit-product-modal -->
+        {% for record in records %}
+            <div class="modal fade" id="edit-product-modal-{{record.id}}" tabindex="-1" aria-labelledby="edit-product-modal-label-{{record.id}}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light">
+                            <h1 class="modal-title fs-5" id="edit-product-modal-label-{{record.id}}">Edytuj dane produktu</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ url_for('store.edit_product', product_id=record.id) }}" method="post">
+                            {{ edit_product_form.hidden_tag() }}
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    {{ edit_product_form.symbol.label(class="form-label") }}
+                                    {{ edit_product_form.symbol(class="form-control", id="symbol", value=record.symbol) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ edit_product_form.item_name.label(class="form-label") }}
+                                    {{ edit_product_form.item_name(class="form-control", id="item_name", value=record.item_name) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ edit_product_form.category.label(class="form-label") }}
+                                    {{ edit_product_form.category(class="form-control", id="category", value=record.category) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ edit_product_form.brand.label(class="form-label") }}
+                                    {{ edit_product_form.brand(class="form-control", id="brand", value=record.brand) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ edit_product_form.model.label(class="form-label") }}
+                                    {{ edit_product_form.model(class="form-control", id="model", value=record.model) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ edit_product_form.weight_kg.label(class="form-label") }}
+                                    {{ edit_product_form.weight_kg(class="form-control", id="weight_kg", value=record.weight_kg) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ edit_product_form.price_pln.label(class="form-label") }}
+                                    {{ edit_product_form.price_pln(class="form-control", id="price_pln", value=record.price_pln) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ edit_product_form.quantity.label(class="form-label") }}
+                                    {{ edit_product_form.quantity(class="form-control", id="quantity", value=record.quantity) }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Anuluj</button>
+                                {{ edit_product_form.submit(class="btn btn-success btn-sm") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!--- delete-product-modal -->
+        {% for record in records %}
+            <div class="modal fade" id="delete-product-modal-{{record.id}}" tabindex="-1" aria-labelledby="deleteProductModalLabel{{record.id}}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light">
+                            <h1 class="modal-title fs-5" id="deleteProductModalLabel{{record.id}}">Usuń produkt</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Czy na pewno chcesz usunąć produkt <strong>{{ record.item_name }}</strong>?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <form method="POST" action="{{ url_for('store.delete_product', product_id=record.id) }}">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Anuluj</button>
+                                <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}    
 {% endblock %}

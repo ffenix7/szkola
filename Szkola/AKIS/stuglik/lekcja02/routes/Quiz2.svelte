@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+import { onMount } from 'svelte';
 
     async function getPokemonData(id){
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
@@ -33,11 +33,12 @@
             const option3 = await getRandomPokemon();
             qs.push({
                 question: `What is the name of this Pokémon?`,
-                image: pokemon.sprite.style.,
+                sprite: pokemon.sprite,
                 options: [pokemon.name, option1.name, option2.name, option3.name],
                 answer: pokemon.name
             });
             qs[i].options.sort(() => Math.random() - 0.5);
+            console.log('Generated question', qs[i]);
         }
         return qs;
     }
@@ -54,17 +55,21 @@
         }
     });
 
-
     let questions = [];
     let currentQuestion = 0;
     let points = 0;
     let selectedOption = null;
     let showAnswer = false;
     let questionsLoaded = false;
+    let quizFinished = false;
+    let results_history = [];
+    let showNameModal = false;
+    let playerName = '';
 
     onMount(async () => {
         questions = await generateQuestions();
         questionsLoaded = true;
+        results_history = JSON.parse(localStorage.getItem('results_history') || '[]');
     });
 
     function checkAnswer(selected) {
@@ -77,41 +82,131 @@
     }
 
     function nextQuestion() {
-        if (questionsLoaded && currentQuestion < questions.length) {
+        if (questionsLoaded && currentQuestion < questions.length - 1) {
             currentQuestion += 1;
             selectedOption = null;
+            showAnswer = false;
+        } else {
+            quizFinished = true;
+            showAnswer = false;
+            showNameModal = true;
         }
-        showAnswer = false;
+    }
+
+    function setHighscore() {
+        let highscore = localStorage.getItem('highscore') || 0;
+        if (points > +highscore) {
+            localStorage.setItem('highscore', points.toString());
+        }
+        results_history = JSON.parse(localStorage.getItem('results_history') || '[]');
+        results_history.push({ date: new Date().toISOString(), score: points, name: playerName });
+        localStorage.setItem('results_history', JSON.stringify(results_history));
+        results_history = [...results_history];
+    }
+
+    function savePlayerName() {
+        if (playerName.trim()) {
+            setHighscore();
+            showNameModal = false;
+            playerName = '';
+        }
     }
 </script>
 
-<div class="max-w-3xl mx-auto p-4">
-    {#if currentQuestion < questions.length}
-        <div class="bg-white shadow-md rounded p-6 mb-4">
-            <h2 class="text-2xl font-bold mb-4">Question {currentQuestion + 1} of {questions.length}</h2>
-            <img src="{questions[currentQuestion].image}" alt="Pokémon sprite" class="mb-4 w-32 h-32 object-contain">
-            <p class="text-lg mb-4">{questions[currentQuestion].question}</p>
-            <div class="space-y-2">
-                {#each questions[currentQuestion].options as option}
-                    <button
-                        class="w-full py-2 px-4 rounded bg-blue-500 text-white
-                        {showAnswer && option === questions[currentQuestion].answer ? 'bg-green-500 text-white' : ''}
-                        {showAnswer && selectedOption === option && option !== questions[currentQuestion].answer ? 'bg-red-500 text-white' : ''}"
-                        disabled={showAnswer}
-                        onclick={() => checkAnswer(option)}>
-                        {option}
-                    </button>
-                {/each}
+<div class="max-w-3xl mx-auto p-4 min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
+    {#if !quizFinished}
+        {#if questionsLoaded && questions.length > 0 && questions[currentQuestion]}
+            <div class="bg-white shadow-lg rounded-xl p-8 mb-6 flex flex-col items-center">
+                <h2 class="text-2xl font-bold mb-4 text-blue-700">Pytanie {currentQuestion + 1} z {questions.length}</h2>
+                <img src="{questions[currentQuestion].sprite}" alt="Pokémon sprite" class="mb-4 w-32 h-32 object-contain drop-shadow-lg transition-all duration-300 {selectedOption ? 'brightness-100' : 'brightness-0'}" />
+                <p class="text-lg mb-4 text-gray-700">{questions[currentQuestion].question}</p>
+                <div class="space-y-2 w-full">
+                    {#each questions[currentQuestion].options as option}
+                        <button
+                            class="w-full py-2 px-4 rounded-lg border border-blue-300 font-semibold shadow-sm transition-colors duration-200
+                            bg-blue-500 text-white hover:bg-blue-600
+                            {showAnswer && option === questions[currentQuestion].answer ? 'bg-green-500 border-green-600 text-white' : ''}
+                            {showAnswer && selectedOption === option && option !== questions[currentQuestion].answer ? 'bg-red-500 border-red-600 text-white' : ''}"
+                            disabled={showAnswer}
+                            onclick={() => checkAnswer(option)}>
+                            {option}
+                        </button>
+                    {/each}
+                </div>
+                    {#if showAnswer}
+                        <button class="mt-4 w-full bg-gray-700 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200" onclick={nextQuestion}>Następne pytanie</button>
+                {/if}
             </div>
-                {#if showAnswer}
-                    <button class="mt-4 w-full bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600" onclick={nextQuestion}>Następne pytanie</button>
-            {/if}
-        </div>
+        {/if}
     {:else}
-        <div class="bg-white shadow-md rounded p-6 text-center">
-            <h2 class="text-2xl font-bold mb-4">Quiz Completed!</h2>
-            <p class="text-lg">You scored {points} out of {questions.length}.</p>
-                <button class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600" onclick={async ()=> {questions = await generateQuestions();currentQuestion = 0; points = 0; selectedOption = null; showAnswer = false;}}>Retake the quiz</button>
+        <div class="bg-white shadow-lg rounded-xl p-8 text-center max-w-lg mx-auto mt-8">
+            <h2 class="text-2xl font-bold mb-4 text-green-700">Quiz ukończony!</h2>
+            <p class="text-lg mb-6 text-gray-700">Twój wynik: <span class="font-bold text-green-600">{points}</span> z <span class="font-bold">{questions.length}</span>.</p>
+            <button class="w-full bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 mb-6" onclick={async ()=> {
+                questions = await generateQuestions();
+                currentQuestion = 0;
+                points = 0;
+                selectedOption = null;
+                showAnswer = false;
+                quizFinished = false;
+            }}>Spróbuj ponownie</button>
+        </div>
+        {#if showNameModal}
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-700">Zapisz wynik</h3>
+                    <p class="text-gray-700 mb-6">Wpisz swoją nazwę użytkownika, aby zapisać wynik:</p>
+                    <input
+                        type="text"
+                        bind:value={playerName}
+                        placeholder="Wpisz nick..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:border-blue-500"
+                        onkeydown={(e) => e.key === 'Enter' && savePlayerName()}
+                    />
+                    <div class="flex gap-4">
+                        <button
+                            class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200"
+                            onclick={savePlayerName}
+                        >
+                            Zapisz
+                        </button>
+                        <button
+                            class="flex-1 bg-gray-400 text-white py-2 px-4 rounded-lg font-semibold hover:bg-gray-500 transition-colors duration-200"
+                            onclick={() => {
+                                showNameModal = false;
+                                playerName = '';
+                            }}
+                        >
+                            Pomiń
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {/if}
+        <div class="overflow-x-auto mt-8">
+            <table class="min-w-full bg-white rounded-xl shadow-md">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="text-center py-3 text-lg font-semibold text-blue-700 bg-blue-100 rounded-t-xl">Najlepsze wyniki:</th>
+                    </tr>
+                    <tr class="bg-blue-50 text-blue-800">
+                        <th class="py-2 px-4">Lp.</th>
+                        <th class="py-2 px-4">Nick</th>
+                        <th class="py-2 px-4">Wynik</th>
+                        <th class="py-2 px-4">Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each results_history.sort((a, b) => b.score - a.score) as result, idx}
+                    <tr class="even:bg-gray-50 hover:bg-blue-50 transition-colors">
+                        <td class="py-2 px-4 text-center">{idx + 1}</td>
+                        <td class="py-2 px-4 text-center">{result.name}</td>
+                        <td class="py-2 px-4 text-center">{result.score} pkt</td>
+                        <td class="py-2 px-4 text-center">{new Date(result.date).toLocaleString()}</td>
+                    </tr>
+                    {/each}
+                </tbody>
+            </table>
         </div>
     {/if}
 </div>
