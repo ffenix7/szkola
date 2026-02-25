@@ -12,7 +12,7 @@ def login():
     if login_form.validate_on_submit():
         user = Users.query.filter_by(email=login_form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, login_form.password.data):
-            login_user(user, remember=True)
+            login_user(user)
             session['user'] = user.email
             flash('Zalogowano pomyślnie!', 'success')
             next_page = request.args.get('next')

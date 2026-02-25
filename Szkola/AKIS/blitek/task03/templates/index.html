@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Lista książek{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between index-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Twoja półka z książkami</h1>
+        <p class="text-muted mb-0">Łącznie: {{ books|length }} pozycji</p>
+    </div>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('add_book') }}" class="btn btn-primary">Dodaj książkę</a>
+    {% endif %}
+</div>
+
+{% if books %}
+    <div class="row book-grid">
+        {% for book in books %}
+            <div class="col-md-6 col-xl-4 d-flex">
+                <div class="card flex-fill shadow-sm book-card">
+                    <div class="book-cover-wrapper">
+                        <a
+                            href="#cover-modal-{{ book.id }}"
+                            class="book-cover-button"
+                            aria-label="Powiększ okładkę {{ book.title }}"
+                        >
+                            <img src="{{ book.cover_url or url_for('static', filename='img/images.png') }}" alt="Okładka {{ book.title }}" class="book-cover">
+                        </a>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title mb-1">{{ book.title }}</h5>
+                        <p class="text-muted mb-1">{{ book.author }} | {{ book.genre }}</p>
+                        <p class="text-muted mb-3">Rok wydania: {{ book.published_year }}</p>
+                        <p class="card-text book-description">{{ book.description }}</p>
+                    </div>
+                    {% if current_user.is_authenticated %}
+                        <div class="card-footer d-flex align-items-center book-actions">
+                            <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-outline-primary btn-sm">Edytuj</a>
+                            <form method="post" action="{{ url_for('delete_book', book_id=book.id) }}" class="ml-auto">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Czy na pewno chcesz usunąć tę książkę?')">Usuń</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state text-center py-5">
+        <h3 class="mb-3">Nic tutaj jeszcze nie ma.</h3>
+        <p class="text-muted">Zaloguj się, aby dodać pierwszą książkę do swojej kolekcji.</p>
+    </div>
+{% endif %}
+
+{% for book in books %}
+<div id="cover-modal-{{ book.id }}" class="cover-modal" aria-hidden="true">
+    <a href="#" class="cover-modal__backdrop" aria-label="Zamknij"></a>
+    <div class="cover-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="cover-modal-title-{{ book.id }}">
+        <div class="cover-modal__header">
+            <h5 id="cover-modal-title-{{ book.id }}" class="cover-modal__title">{{ book.title }}</h5>
+            <a href="#" class="cover-modal__close" aria-label="Zamknij">&times;</a>
+        </div>
+        <div class="cover-modal__body">
+            <img src="{{ book.cover_url or url_for('static', filename='img/images.png') }}" alt="Powiększona okładka {{ book.title }}" class="book-cover-expanded">
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
