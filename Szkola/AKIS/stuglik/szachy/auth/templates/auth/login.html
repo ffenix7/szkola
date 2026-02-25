@@ -11,13 +11,13 @@
 
 {% block content %}
 
-    <nav class="navbar bg-body-tertiary">
+    <nav class="navbar app-navbar navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand mx-5" href="{{url_for('main.index')}}">Home</a>
         </div>
     </nav>
 
-    <div class="container mt-4 fade-in">
+    <div class="app-shell app-shell--narrow fade-in">
         <div class="col-lg-12">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -30,15 +30,15 @@
                 {% endif %}
             {% endwith %}
         </div>
-        <div class="col-lg-4 offset-lg-4">
-            <h2 class="mb4">Logowanie</h2>
+        <div class="auth-card">
+            <h2 class="mb-4">Logowanie</h2>
             <form method="POST">
                 {{login_form.hidden_tag()}}
                 <div class="form-group">
                     {{login_form.email.label(class="form-label")}}
                     {{login_form.email(class='form-control')}}
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-2">
                     {{login_form.password.label(class='form-label')}}
                     {{login_form.password(class='form-control')}}
                 </div>
