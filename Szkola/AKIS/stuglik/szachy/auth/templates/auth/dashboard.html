@@ -11,17 +11,17 @@
 
 {% block content %}
 
-    <nav class="navbar bg-body-tertiary">
+    <nav class="navbar app-navbar navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand mx-5" href="{{url_for('auth.dashboard')}}">Home</a>
-            <ul class="nav justify-content=end">
-                <li class="nav-item"> Użytkownik, {{current_user.email}}</li>
+            <ul class="nav">
+                <li class="nav-item text-light small">Użytkownik, {{current_user.email}}</li>
             </ul>
             <a href="{{url_for('auth.logout')}}" class="btn btn-danger">Wyloguj</a>
         </div>
     </nav>
     
-    <div class="container mt-4 fade-in">
+    <div class="app-shell fade-in">
         <div class="col-lg-12">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}

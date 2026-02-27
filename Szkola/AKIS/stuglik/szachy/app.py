@@ -34,7 +34,6 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(store_bp, url_prefix='/tournaments')
 
-    #user loader
     @login_manager.user_loader
     def load_user(user_id):
         return Users.query.get(int(user_id))

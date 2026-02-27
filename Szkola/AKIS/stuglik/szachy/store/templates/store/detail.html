@@ -56,7 +56,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-light bg-light border-bottom">
+<nav class="navbar app-navbar navbar-dark border-bottom">
     <div class="container-fluid">
         <div class="d-flex align-items-center gap-2">
             <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('tournaments.index') }}">Wróć</a>
@@ -69,7 +69,7 @@
     </div>
 </nav>
 
-<div class="container mt-4">
+<div class="app-shell">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -140,7 +140,7 @@
         </div>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 align-items-start">
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -170,8 +170,10 @@
                     </form>
                 </div>
             </div>
+        </div>
 
-            <div class="card mt-3">
+        <div class="col-lg-6">
+            <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Uczestnicy</span>
                     {% if tournament.selection_mode == 'all' %}
