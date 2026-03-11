@@ -1,0 +1,53 @@
+{% extends 'bootstrap/base.html' %}
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a href="{{ url_for('shop.index') }}" class="navbar-brand mx-5">Home</a>
+            <ul class="nav justify-content-end">
+                <li class="nav-item">Użytkownik, {{ current_user.email }}</li>
+            </ul>
+
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-secondary mx-5">Wyloguj</a>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        <div class="d-flex align-items-center justify-content-between">
+            <h2 class="mb-0">Sklep</h2>
+            <div class="d-flex gap-2">
+                <a href="#" class="btn btn-sm btn-outline-secondary">Zamówienia</a>
+            </div>
+        </div>
+
+        
+    </div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Nazwa</th>
+                <th scope="col">Cena</th>
+                <th scope="col">Ilość</th>
+                <th scope="col">Zakupy</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price_pln }} zł</td>
+                <td>{{ product.quantity }}</td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-primary">
+                        <i class="bi bi-cart-plus pe-1"></i>Dodaj do koszyka
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

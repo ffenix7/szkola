@@ -3,23 +3,13 @@ from wtforms import StringField, SubmitField, IntegerField, FloatField
 from wtforms.validators import DataRequired
 
 class AddProductForm(FlaskForm):
-    symbol = StringField('Symbol', validators=[DataRequired()])
-    item_name = StringField('Nazwa produktu', validators=[DataRequired()])
-    quantity = IntegerField('Ilość', validators=[DataRequired()])
-    price_pln = FloatField('Cena (PLN)', validators=[DataRequired()])
-    category = StringField('Kategoria', validators=[DataRequired()])
-    brand = StringField('Marka', validators=[DataRequired()])
-    model = StringField('Model', validators=[DataRequired()])
-    weight_kg = FloatField('Waga (kg)', validators=[DataRequired()])
-    submit = SubmitField('Dodaj produkt')
-
-class EditProductForm(FlaskForm):
-    symbol = StringField('Symbol', validators=[DataRequired()])
-    item_name = StringField('Nazwa produktu', validators=[DataRequired()])
-    quantity = IntegerField('Ilość', validators=[DataRequired()])
-    price_pln = FloatField('Cena (PLN)', validators=[DataRequired()])
-    category = StringField('Kategoria', validators=[DataRequired()])
-    brand = StringField('Marka', validators=[DataRequired()])
-    model = StringField('Model', validators=[DataRequired()])
-    weight_kg = FloatField('Waga (kg)', validators=[DataRequired()])
-    submit = SubmitField('Zapisz zmiany')
+    symbol    = StringField ('Symbol'          , [DataRequired()])
+    name      = StringField ('Nazwa'           , [DataRequired()])
+    category  = StringField ('Kategoria'       , [DataRequired()])
+    brand     = StringField ('Producent'       , [DataRequired()])
+    model     = StringField ('Model'           , [DataRequired()])
+    quantity  = IntegerField('Ilość'           , [DataRequired()])
+    weight_kg = FloatField  ('Wgaga (kg)'      , [DataRequired()])
+    weight_kg = FloatField  ('Waga (kg)'       , [DataRequired()])
+    price_pln = FloatField  ('Cena jednostkowa', [DataRequired()])
+    submit    = SubmitField ('Dodaj')
