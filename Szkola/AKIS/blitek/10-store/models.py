@@ -29,3 +29,18 @@ class CartItem(db.Model):
     product_id   = db.Column(db.Integer, db.ForeignKey('inventory.id'), nullable=False)
     quantity  = db.Column(db.Integer, nullable=False, default=1)
     product = db.relationship('Inventory')
+
+class Order(db.Model):
+    id          = db.Column(db.Integer, primary_key=True)
+    user_id     = db.Column(db.Integer, nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
+    created_at  = db.Column(db.DateTime, server_default=db.func.now())
+
+class OrderItem(db.Model):
+    id          = db.Column(db.Integer, primary_key=True)
+    order_id    = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
+    product_id  = db.Column(db.Integer, db.ForeignKey('inventory.id'), nullable=False)
+    quantity    = db.Column(db.Integer, nullable=False)
+    price_pln   = db.Column(db.Float, nullable=False)
+    
+    order = db.relationship('Order')

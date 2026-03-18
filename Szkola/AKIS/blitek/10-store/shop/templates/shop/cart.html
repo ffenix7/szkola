@@ -5,6 +5,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
             <a href="{{ url_for('shop.index') }}" class="navbar-brand mx-5">Home</a>
@@ -20,7 +21,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <h2 class="mb-0">Sklep</h2>
             <div class="d-flex gap-2">
-                <a href="#" class="btn btn-sm btn-outline-secondary">Zamówienia</a>
+                <a href="{{ url_for('shop.index') }}" class="btn btn-sm btn-outline-secondary">Kontynuuj zakupy</a>
             </div>
         </div>
 
@@ -36,6 +37,7 @@
             <tr>
                 <th scope="col">Nazwa</th>
                 <th scope="col">Cena</th>
+                <th scope="col">W magazynie</th>
                 <th scope="col">Ilość</th>
                 <th scope="col">Zakupy</th>
             </tr>
@@ -43,17 +45,53 @@
         <tbody>
             {%for item in cart_items %}
             <tr>
-                <td>{{ "%.2f" | format(item.product.name) }}</td>
+                <td>{{ item.product.name }}</td>
                 <td>{{ "%.2f" | format(item.product.price_pln) }} zł</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ "%.2f" | format(item.product.price_pln * item.quantity) }} zł</td>
+                <td>{{ item.product.quantity }}</td>
+                <td><select class="form-control cart-quantity" name="quantity-{{ item.product.id }}" data-price="{{ item.product.price_pln }}" data-item-id="{{ item.product.id }}">
+                    {% for i in range(1, item.product.quantity + 1) %}
+                        <option value="{{ i }}" {% if i == item.quantity %}selected{% endif %}>{{ i }}</option>
+                    {% endfor %}
+                </select></td>
+                <td><span id="subtotal-{{ item.product.id }}">{{ "%.2f" | format(item.product.price_pln * item.quantity) }}</span> zł</td>
+                <td>
+                    <a href="{{ url_for('shop.remove_from_cart', product_id=item.product.id) }}" class="btn btn-sm btn-danger">
+                        <i class="bi bi-cart-dash pe-1"></i>Usuń z koszyka
+                    </a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <div class="d-flex justify-content-end">
-        <h4>Łączna wartość koszyka: {{ "%.2f" | format(total_price) }} zł</h4>
-        <a href="#" class="btn btn-success ms-2">Zamów</a>
+        <h4>Łączna wartość koszyka: <span id="cart-total">{{ "%.2f" | format(total_price) }}</span> zł</h4>
+        <a href="{{ url_for('shop.checkout') }}" class="btn btn-success ms-2">Zamów</a>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function recalcTotal() {
+            let total = 0;
+            document.querySelectorAll('.cart-quantity').forEach(function(sel) {
+                const price = parseFloat(sel.dataset.price) || 0;
+                const qty = parseInt(sel.value) || 0;
+                total += price * qty;
+            });
+            const totalEl = document.getElementById('cart-total');
+            if (totalEl) totalEl.textContent = total.toFixed(2);
+        }
+
+        document.querySelectorAll('.cart-quantity').forEach(function(sel) {
+            sel.addEventListener('change', function(e) {
+                const price = parseFloat(this.dataset.price) || 0;
+                const qty = parseInt(this.value) || 0;
+                const itemId = this.dataset.itemId;
+                const subtotalEl = document.getElementById('subtotal-' + itemId);
+                if (subtotalEl) subtotalEl.textContent = (price * qty).toFixed(2);
+                recalcTotal();
+            });
+        });
+    });
+    </script>
     {% endif %}
 {% endblock %}
