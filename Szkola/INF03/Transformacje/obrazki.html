@@ -11,7 +11,7 @@
         <h2>Efekty na obrazach</h2>
     </header>
     <section>
-        <img src="./pszczola.jpg" id="image_1" alt="pszczoła na fioletowym kwiatku">
+        <img src="./pszczola.jpg" id="image_1" alt="pszczoła na fioletowym kwiatku"><br>
         <input type="radio" name="efect" value="blur" id="blur"><label>Blur</label><br>
         <input type="radio" name="efect" value="sepia" id="sepia"><label>Sepia</label><br>
         <input type="radio" name="efect" value="negatyw" id="inverse"><label>Negatyw</label><br>
@@ -19,8 +19,8 @@
     </section>
     <section>
         <img src="./pomarancza.jpg" alt="drzewo pomarańczy" id="image_2"><br>
-        <button id="kolorowy">Kolorowy</button>
-        <button id="czarno-bialy">Czarno-biały</button>
+        <button id="color">Kolorowy</button>
+        <button id="grayscale">Czarno-biały</button>
     </section>
     <section>
         <img src="./owoce.jpg" alt="Kosz pełen owoców" id="image_3">
@@ -44,8 +44,8 @@
         const image_4 = document.getElementById("image_4")
 
         const button_1 = document.getElementById("button1")
-        const button_kolorowy = document.getElementById("kolorowy")
-        const button_czarno_bialy = document.getElementById("czarno-bialy")
+        const button_color = document.getElementById("color")
+        const button_grayscale = document.getElementById("grayscale")
         const button_3 = document.getElementById("button3")
         const button_4 = document.getElementById("button4")
 
@@ -68,10 +68,10 @@
             }
         })
 
-        button_kolorowy.addEventListener("click", () =>{
+        button_color.addEventListener("click", () =>{
             image_2.style.filter = "none"
         })
-        button_czarno_bialy.addEventListener("click", () =>{
+        button_grayscale.addEventListener("click", () =>{
             image_2.style.filter = "grayscale(100%)"
         })
 
