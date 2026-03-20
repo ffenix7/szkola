@@ -1,0 +1,28 @@
+/* Cart page styles */
+body {
+  background: #f6f8fb;
+  color: #2d2d2d;
+}
+.navbar {
+  background: linear-gradient(90deg,#ffffff 0%, #f8f9fb 100%);
+  border-bottom: 1px solid #e6e9ef;
+  padding: .6rem 1rem;
+}
+.container.mt-3 h2 { font-weight: 600; }
+.table-hover { background: #fff; border-radius: 8px; overflow: hidden; }
+.table thead th { background: #fafbfd; color:#444; font-weight:600; }
+.table td, .table th { vertical-align: middle; }
+.cart-quantity { width: 80px; }
+.btn-sm.btn-danger { background:#e24b4b; border-color: #d13b3b; }
+.btn-success { background: linear-gradient(180deg,#2fa84f,#168a3a); border: none; }
+#cart-total { font-weight: 700; color: #0b6b2f; margin-left: 6px; }
+#cart-total, h4 { margin: 0; }
+/* Subtotal styling */
+[id^="subtotal-"] { font-weight: 600; }
+/* Responsive */
+@media (max-width: 768px) {
+  .table thead { display:none; }
+  .table tbody td { display:block; width:100%; }
+  .table tbody tr { margin-bottom: .75rem; display:block; border:1px solid #eee; padding:.5rem; border-radius:6px; background:#fff; }
+  .cart-quantity { width:100%; }
+}

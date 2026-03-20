@@ -20,7 +20,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <h2 class="mb-0">Sklep</h2>
             <div class="d-flex gap-2">
-                <a href="#" class="btn btn-sm btn-outline-secondary">Zamówienia</a>
+                <a href="{{ url_for('shop.cart') }}" class="btn btn-sm btn-outline-secondary">Koszyk</a>
             </div>
         </div>
 
@@ -42,7 +42,7 @@
                 <td>{{ product.price_pln }} zł</td>
                 <td>{{ product.quantity }}</td>
                 <td>
-                    <a href="#" class="btn btn-sm btn-primary">
+                    <a href="{{ url_for('shop.add_to_cart', product_id=product.id) }}" class="btn btn-sm btn-primary">
                         <i class="bi bi-cart-plus pe-1"></i>Dodaj do koszyka
                     </a>
                 </td>
