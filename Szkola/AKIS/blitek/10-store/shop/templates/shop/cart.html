@@ -1,0 +1,59 @@
+{% extends 'bootstrap/base.html' %}
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a href="{{ url_for('shop.index') }}" class="navbar-brand mx-5">Home</a>
+            <ul class="nav justify-content-end">
+                <li class="nav-item">Użytkownik, {{ current_user.email }}</li>
+            </ul>
+
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-secondary mx-5">Wyloguj</a>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        <div class="d-flex align-items-center justify-content-between">
+            <h2 class="mb-0">Sklep</h2>
+            <div class="d-flex gap-2">
+                <a href="#" class="btn btn-sm btn-outline-secondary">Zamówienia</a>
+            </div>
+        </div>
+
+        
+    </div>
+    {% if not cart_items %}
+        <div class="alert alert-info" role="alert">
+            Twój koszyk jest pusty. Dodaj produkty, aby zobaczyć je tutaj.
+        </div>
+    {% else %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Nazwa</th>
+                <th scope="col">Cena</th>
+                <th scope="col">Ilość</th>
+                <th scope="col">Zakupy</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for item in cart_items %}
+            <tr>
+                <td>{{ "%.2f" | format(item.product.name) }}</td>
+                <td>{{ "%.2f" | format(item.product.price_pln) }} zł</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ "%.2f" | format(item.product.price_pln * item.quantity) }} zł</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-end">
+        <h4>Łączna wartość koszyka: {{ "%.2f" | format(total_price) }} zł</h4>
+        <a href="#" class="btn btn-success ms-2">Zamów</a>
+    </div>
+    {% endif %}
+{% endblock %}
