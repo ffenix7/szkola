@@ -1,0 +1,230 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📊 Zaawansowany Dashboard</h1>
+        <a href="{{ url_for('store.index') }}" class="btn btn-secondary">← Wróć do magazynu</a>
+    </div>
+
+    <!-- KPI KARTY U GÓRY -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title small">Całkowity Przychód</h5>
+                    <p class="display-6 mb-0">{{ "%.2f"|format(total_revenue) }}</p>
+                    <small class="text-white-50">PLN</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title small">Ilość Zamówień</h5>
+                    <p class="display-6 mb-0">{{ order_count }}</p>
+                    <small class="text-white-50">zamówienia</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title small">Średnia Wartość</h5>
+                    <p class="display-6 mb-0">{{ "%.2f"|format(avg_order_value) }}</p>
+                    <small class="text-white-50">PLN/zamówienie</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title small">Produktów w Systemie</h5>
+                    <p class="display-6 mb-0">{{ product_count }}</p>
+                    <small class="text-muted">łącznie</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WYKRESY -->
+    <div class="row">
+        <!-- Wykres 1: Przychody w ostatnich 7 dniach -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">📈 Przychód (7 dni)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wykres 2: Rozkład kategorii -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">🥧 Kategorie produktów</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wykres 3: Top produkty (pełna szerokość) -->
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">⭐ Top 5 produktów</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="topProductsChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+    // ============================================================
+    // SNIPPET 1: LINE CHART — Przychody w ostatnich 7 dniach
+    // ============================================================
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    const revenueData = {{ revenue_data | tojson }};
+
+    // Wyciągnij daty i przychody z danych
+    const revenueLabels = revenueData.map(item => item[0]);  // ["2025-01-20", "2025-01-21", ...]
+    const revenueValues = revenueData.map(item => item[1]);  // [1500, 2300, 800, ...]
+
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Przychód (PLN)',
+                data: revenueValues,
+                borderColor: '#0066cc',
+                backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                borderWidth: 3,
+                tension: 0.4,  // Gładka krzywa
+                fill: true,
+                pointRadius: 6,
+                pointBackgroundColor: '#0066cc',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { padding: 20, font: { size: 12 } }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: function(value) { return value + ' PLN'; } },
+                    title: { display: true, text: 'Przychód (PLN)' }
+                }
+            }
+        }
+    });
+
+    // ============================================================
+    // SNIPPET 2: BAR CHART (HORIZONTAL) — Top 5 produktów
+    // ============================================================
+    const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+    const topProducts = {{ top_products_data | tojson }};
+
+    // Wyciągnij nazwy i ilości
+    const productNames = topProducts.map(p => p[0]);     // ["Laptop HP", "Monitor Dell", ...]
+    const productQuantities = topProducts.map(p => p[1]); // [15, 12, 8, 5, 3]
+
+    new Chart(topProductsCtx, {
+        type: 'bar',
+        data: {
+            labels: productNames,
+            datasets: [{
+                label: 'Ilość sprzedanych',
+                data: productQuantities,
+                backgroundColor: [
+                    '#FF6384',  // Różowy
+                    '#36A2EB',  // Niebieski
+                    '#FFCE56',  // Żółty
+                    '#4BC0C0',  // Turkusowy
+                    '#9966FF'   // Fioletowy
+                ],
+                borderWidth: 2,
+                borderColor: '#333',
+                borderRadius: 5
+            }]
+        },
+        options: {
+            indexAxis: 'y',  // Poziomy bar chart
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { padding: 20, font: { size: 12 } }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { callback: function(value) { return value + ' szt'; } }
+                }
+            }
+        }
+    });
+
+    // ============================================================
+    // SNIPPET 3: DOUGHNUT CHART — Rozkład kategorii
+    // ============================================================
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const categoryData = {{ category_data | tojson }};
+
+    // Wyciągnij nazwy kategorii i liczby
+    const categoryNames = categoryData.map(c => c[0]);    // ["Keyboard", "Laptop", "Monitor", ...]
+    const categoryCounts = categoryData.map(c => c[1]);   // [15, 12, 8, ...]
+
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: categoryNames,
+            datasets: [{
+                data: categoryCounts,
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                    '#9966FF', '#FF9F40', '#C9CBCF', '#00D9FF',
+                    '#FF6B9D', '#FFC75F', '#A4DE6C', '#FF69B4'
+                ],
+                borderColor: '#fff',
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { padding: 15, font: { size: 11 } }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

@@ -18,9 +18,10 @@
 
     <div class="container mt-3">
         <div class="d-flex align-items-center justify-content-between">
-            <h2 class="mb-0">Sklep</h2>
+            <h2 class="mb-0">Zamówienia</h2>
             <div class="d-flex gap-2">
-                <a href="#" class="btn btn-sm btn-outline-secondary">Zamówienia</a>
+                <a href="{{ url_for('shop.index') }}" class="btn btn-sm btn-outline-secondary">Sklep</a>
+                <a href="{{ url_for('shop.cart') }}" class="btn btn-sm btn-outline-secondary">Koszyk</a>
             </div>
         </div>
 
@@ -39,9 +40,10 @@
                 <div class="card-body">
                     <h5 class="card-title">Zamówione produkty:</h5>
                     <ul class="list-group list-group-flush">
-                        {% for item in order.items %}
+                        {% for item in items_by_order.get(order.id, []) %}
+                            {% set product = products_by_id.get(item.product_id) %}
                             <li class="list-group-item">
-                                {{ item.product.name }} - {{ item.quantity }} x {{ "%.2f" | format(item.product.price_pln) }} zł
+                                {{ product.name if product else 'Produkt usunięty' }} - {{ item.quantity }} szt., wartość pozycji: {{ "%.2f" | format(item.price_pln) }} zł
                             </li>
                         {% endfor %}
                     </ul>
@@ -51,30 +53,5 @@
                 </div>
             </div>
         {% endfor %}
-
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Nazwa</th>
-                <th scope="col">Cena</th>
-                <th scope="col">Ilość</th>
-                <th scope="col">Zakupy</th>
-            </tr>
-        </thead>
-        <tbody>
-            {%for item in orders %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ "%.2f" | format(item.product.price_pln) }} zł</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ "%.2f" | format(item.product.price_pln * item.quantity) }} zł</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div class="d-flex justify-content-end">
-        <h4>Łączna wartość zamówień: {{ "%.2f" | format(total_price) }} zł</h4>
-        <a href="{{ url_for('shop.checkout') }}" class="btn btn-success ms-2">Zamów</a>
-    </div>
     {% endif %}
 {% endblock %}

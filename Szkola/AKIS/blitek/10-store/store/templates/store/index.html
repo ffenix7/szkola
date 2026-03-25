@@ -11,7 +11,7 @@
 {% block content %}
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
-            <a href="{{ url_for('main.index') }}" class="navbar-brand mx-5">Home</a>
+            <a href="{{ url_for('auth.dashboard') }}" class="navbar-brand mx-5">Home</a>
 
             <ul class="nav justify-content-end">
                 <li class="nav-item">Użytkownik, {{ current_user.email }}</li>
@@ -52,6 +52,7 @@
                 <a href="#" data-bs-toggle="modal" data-bs-target="#add-product-modal" class="btn btn-sm btn-outline-secondary float-end">Dodaj produkt</a>
                 <a href="#" class="btn btn-sm btn-outline-success float-end mx-1" data-bs-toggle="modal" data-bs-target="#import-modal">Importuj</a>
                 <a href="{{ url_for('store.export_data') }}" class="btn btn-sm btn-outline-primary float-end mx-1">Eksportuj</a>
+                <a href="{{ url_for('store.dashboard_advanced') }}" class="btn btn-sm btn-outline-dark float-end mx-1">Dashboard Advanced</a>
             </div>
         </div>
 
@@ -125,7 +126,7 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
                         <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                            <a href="{% if pagination.has_prev %}{{ url_for('store.index', page=pagination.prev_num, search=search, order=order, direction=direction) }}{% else %}0{% endif %}" class="page-link">Poprzednia</a>
+                            <a href="{% if pagination.has_prev %}{{ url_for('store.index', page=pagination.prev_num, search=search, order=order, direction=direction) }}{% else %}#{% endif %}" class="page-link">Poprzednia</a>
                         </li>
 
                         {% for p in pagination.iter_pages(left_edge=1, left_current=2, right_current=2, right_edge=1) %}
@@ -139,7 +140,7 @@
                         {% endfor %}
 
                         <li class="page-item {% if not pagination.has_next %} disabled {% endif %}">
-                            <a href="{% if pagination.has_next %}{{ url_for('store.index', page=pagination.next_num, search=search, order=order, direction=direction) }}{% else %}0{% endif %}" class="page-link">Następna</a>
+                            <a href="{% if pagination.has_next %}{{ url_for('store.index', page=pagination.next_num, search=search, order=order, direction=direction) }}{% else %}#{% endif %}" class="page-link">Następna</a>
                         </li>
                     </ul>
                 </nav>
@@ -210,7 +211,7 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
                         <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
-                            <a href="{% if pagination.has_prev %}{{ url_for('store.index', page=pagination.prev_num, search=search, order=order, direction=direction) }}{% else %}0{% endif %}" class="page-link">Poprzednia</a>
+                            <a href="{% if pagination.has_prev %}{{ url_for('store.index', page=pagination.prev_num, search=search, order=order, direction=direction) }}{% else %}#{% endif %}" class="page-link">Poprzednia</a>
                         </li>
 
                         {% for p in pagination.iter_pages(left_edge=1, left_current=2, right_current=2, right_edge=1) %}
@@ -224,7 +225,7 @@
                         {% endfor %}
 
                         <li class="page-item {% if not pagination.has_next %} disabled {% endif %}">
-                            <a href="{% if pagination.has_next %}{{ url_for('store.index', page=pagination.next_num, search=search, order=order, direction=direction) }}{% else %}0{% endif %}" class="page-link">Następna</a>
+                            <a href="{% if pagination.has_next %}{{ url_for('store.index', page=pagination.next_num, search=search, order=order, direction=direction) }}{% else %}#{% endif %}" class="page-link">Następna</a>
                         </li>
                     </ul>
                 </nav>
