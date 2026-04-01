@@ -20,8 +20,6 @@ if(!empty($_SESSION["error_message"])){
 
 <?php
 
-    
-
 ?>
 
 <h1>Dashboard</h1>
@@ -35,13 +33,23 @@ if(!empty($_SESSION["error_message"])){
 </form>
 
 <?php
-
+    $user_id = $_SESSION['user_id'];
     $db = connect_to_db();
+    $user= $db->query("SELECT * FROM users WHERE users.id = $user_id");
+    $user_role = $user->fetch_assoc()['ROLE'];
+    if ($user_role == "ROLE_ADMIN"){
+        echo "<p>" . "<a href='./panel.php'>Panel admina</a>" . "<br>";
+    } 
 
-    $results = $db->query("SELECT * FROM chat JOIN users ON chat.user_id = users.id ORDER BY chat.id ASC");
+    $results = $db->query("SELECT chat.id AS message_id, chat.message, chat.time, users.login, users.id AS user_id FROM chat JOIN users ON chat.user_id = users.id ORDER BY chat.id ASC");
     echo "<div class='chat'>";
     while($row = $results->fetch_assoc()){
-        echo "<div class='message'>" . $row["login"] . ": " . $row["time"] . "<b>: " . $row["message"] . "</b></div>";
+            if ($user_role == "ROLE_ADMIN" || $user_role == "ROLE_MOD"){
+            echo "<div class='message'>" . $row["login"] . ": " . $row["time"] . "<b>: " . $row["message"] . "<a class='delete' href='./delete-message.php?delete_id=" . $row["message_id"] . "'>X</a>" . "</b></div>";
+        } 
+        else{
+            echo "<div class='message'>" . $row["login"] . ": " . $row["time"] . "<b>: " . $row["message"] . "</b></div>";
+        }
     }
     echo "</div>";
 

@@ -67,3 +67,13 @@ footer{
     border-radius: 10px;
     width: 40%;
 }
+
+td{
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.delete{
+    text-decoration: none;
+    color: rgb(176, 27, 27);
+}
