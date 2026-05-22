@@ -8,6 +8,7 @@ const port = 3000
 let  data =  [
     { id: 'v1', location: 'Magazyn Główny', code: '1234', securityLevel: 'High' },
     { id: 'v2', location: 'Biuro Zarządu', code: '9988', securityLevel: 'Critical' },
+    { id: 'v3', location: 'Magazyn Główny 2', code: '1234', securityLevel: 'High' },
 ];
 
 app.get('/', (req, res) => {

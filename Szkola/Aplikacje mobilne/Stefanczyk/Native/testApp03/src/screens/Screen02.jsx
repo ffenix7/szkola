@@ -53,9 +53,10 @@ const Screen02 = ({ navigation }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={{ margin: 10, backgroundColor: "aqua", padding: 10, borderRadius: 10 }}
+            style={{ margin: 10, backgroundColor: "aqua", padding: 10, borderRadius: 10, width: 100, display: "flex" }}
             onLongPress={() => deleteNote(item.id)}
           >
+            <Text style={{fontSize: 10, backgroundColor: "white", borderRadius: 5, textAlign: "center", alignSelf: "flex-start", padding: 5}}>{item.category}</Text>
             <Text style={{fontSize: 30, }}>{item.title}</Text>
             <Text>{item.desc}</Text>
           </TouchableOpacity>
