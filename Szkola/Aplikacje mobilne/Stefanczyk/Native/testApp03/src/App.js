@@ -40,7 +40,7 @@ function CustomDrawerContent(props) {
       <DrawerItem
       label="Info"
       icon={() => <Image />}
-      onPress={() => console.log("Info")}
+      onPress={() => alert("Autor: Filip Gębala")}
       />
     </DrawerContentScrollView>
   );

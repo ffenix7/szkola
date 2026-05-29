@@ -1,44 +1,89 @@
-import { Text, View, TextInput, Button } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
-import * as React from 'react';
+import React from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 
-const Screen03 = ({navigation}) => {
-  const [id, setID] = React.useState(1);
+import * as SecureStore from 'expo-secure-store';
+
+const Screen03 = ({ navigation }) => {
   const [category, setCategory] = React.useState('');
 
   const addCategory = async () => {
-  try {
-    const storedCategories = await SecureStore.getItemAsync("categories");
-    let categories = [];
+    try {
+      if (category.trim() === '') {
+        Alert.alert('Błąd', 'Wpisz nazwę kategorii');
+        return;
+      }
 
-    if (storedCategories) {
-      const parsed = JSON.parse(storedCategories);
-      categories = Array.isArray(parsed) ? parsed : [];
+      const storedCategories =
+        await SecureStore.getItemAsync('categories');
+
+      let categories = [];
+
+      if (storedCategories) {
+        const parsed = JSON.parse(storedCategories);
+
+        categories = Array.isArray(parsed)
+          ? parsed
+          : [];
+      }
+
+      const exists = categories.find(
+        item =>
+          item.name.toLowerCase() ===
+          category.toLowerCase()
+      );
+
+      if (exists) {
+        Alert.alert(
+          'Błąd',
+          'Taka kategoria już istnieje'
+        );
+        return;
+      }
+
+      const newCategory = {
+        id: Date.now(),
+        name: category,
+      };
+
+      categories.push(newCategory);
+
+      await SecureStore.setItemAsync(
+        'categories',
+        JSON.stringify(categories)
+      );
+
+      console.log(
+        'Zapisane kategorie:',
+        categories
+      );
+
+      setCategory('');
+
+      navigation.navigate('Screen02');
+    } catch (e) {
+      console.log(
+        'Error saving category:',
+        e
+      );
     }
-
-    const newCategory = {
-      id: id,
-      name: category,
-    };
-
-    categories.push(newCategory);
-
-    await SecureStore.setItemAsync("categories", JSON.stringify(categories));
-
-    setID(prev => prev + 1);
-    setCategory('');
-  } catch (e) {
-    console.log("Error saving category", e);
-  }
-  navigation.navigate("Screen02")
-};
+  };
 
   return (
-    <View>
-      <Text>Screen 3</Text>
+    <View style={styles.container}>
+      <Text style={styles.header}>
+        Dodaj kategorię
+      </Text>
 
       <TextInput
-        placeholder="Kategoria"
+        style={styles.input}
+        placeholder="Nazwa kategorii"
         value={category}
         onChangeText={setCategory}
       />
@@ -52,3 +97,24 @@ const Screen03 = ({navigation}) => {
 };
 
 export default Screen03;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 20,
+  },
+});
