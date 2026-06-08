@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="w-100">
+            <h1 class="h4 mb-3">Twoje pliki</h1>
+            <div class="d-flex flex-wrap gap-2 align-items-center text-muted small">
+            <div>Zalogowano jako: {{ user.email }}</div>
+            {% if user.is_admin %}
+                <span class="badge bg-warning">admin</span>
+            {% else %}
+                <span class="badge bg-secondary">user</span>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row g-3 mb-3">
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="fw-semibold">Foldery</div>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('drive.create_folder') }}" class="d-flex gap-2 mb-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <input type="hidden" name="parent" value="{{ current_folder.id if current_folder else '' }}"/>
+                        <input type="text" name="name" class="form-control" placeholder="Nazwa folderu" required />
+                    </form>
+
+                    <div class="list-group">
+                        {% if current_folder %}
+                            {% if current_folder.parent_id %}
+                                <a class="list-group-item list-group-item-action" href="{{ url_for('drive.dashboard', folderid=current_folder.parent_id) }}">
+                                    <i class="bi bi-folder-symlink-fill"></i> .. (wróć)
+                                </a>
+                            {% else %}
+                                <a class="list-group-item list-group-item-action" href="{{ url_for('drive.dashboard') }}">
+                                    <i class="bi bi-folder-symlink-fill"></i> .. (wróć)
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                        {% for folder in folders %}
+                            <a class="list-group-item list-group-item-action" href="{{ url_for('drive.dashboard', folderid=folder.id) }}">
+                                <i class="bi bi-folder-fill"></i> {{ folder.name }}
+                            </a>
+                        {% else %}
+                            <div class="list-group-item text-muted">Brak folderów</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('drive.upload_file') }}" enctype="multipart/form-data" class="d-flex gap-2 mb-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <input type="hidden" name="parent" value="{{ current_folder.id if current_folder else '' }}"/>
+                        <input type="file" name="file" class="form-control" required />
+                        <button type="submit" class="btn btn-primary">Prześlij</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nazwa</th>
+                            <th>Rozmiar</th>
+                            <th>Data dodania</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in files %}
+                            <tr>
+                                <td>
+                                    {% if file.is_folder %}
+                                        <a href="{{ url_for('drive.dashboard', folderid=file.id) }}" class="text-decoration-none">
+                                            <i class="bi bi-folder-fill"></i> {{ file.name }}
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ url_for('drive.download_file', fileid=file.id) }}" class="text-decoration-none">
+                                            <i class="bi bi-file-earmark-fill"></i> {{ file.name }}
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not file.is_folder %}
+                                        {{ file.size | filesizeformat }}
+                                    {% endif %}
+                                </td>   
+                                <td>{{ file.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('drive.delete_file', fileid=file.id) }}" onsubmit="return confirm('Czy na pewno chcesz usunąć ten plik?');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <button type="submit" class="btn btn-sm btn-danger">Usuń</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Brak plików</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+    </div>
+{% endblock %}

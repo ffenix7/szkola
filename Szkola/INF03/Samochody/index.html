@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konfigurator wyposażenia</title>
+    <link rel="stylesheet" href="styl.css">
+</head>
+<body>
+    <main>
+        <section>
+            <section id="baner">
+                <img src="logo.png" alt="baner">
+            </section>
+            <aside id="left">
+                <form>
+                    <hr>
+                    <h2>Kolor</h2>
+                    <select>
+                        <option value="czerwony">Czerwony</option>
+                        <option value="niebieski">Niebieski</option>
+                        <option value="zielony">Zielony</option>
+                        <option value="szary" selected>Szary</option>
+                        <option value="zolty">Zółty</option>
+                    </select>
+                    <hr>
+                    <h2>Felgi</h2>
+                    <input type="radio" name="felgi" value="stalowe" id="stalowe" checked>
+                    <label for="stalowe">Stalowe</label><br>
+                    <input type="radio" name="felgi" value="aluminiowe" id="aluminiowe">
+                    <label for="aluminiowe">Aluminiowe</label><br>
+                    <hr>
+                    <h2>Doposażenie</h2>
+                    <input type="checkbox" name="doposażenie" value="czujniki" id="czujniki" >
+                    <label for="czujniki"> Czujniki parkowania</label><br>
+                    <input type="checkbox" name="doposażenie" value="climatronic" id="climatronic">
+                    <label for="climatronic"> Climatronic</label><br>
+                    <input type="checkbox" name="doposażenie" value="nawigacja" id="nawigacja">
+                    <label for="nawigacja"> Nawigacja</label>
+                    <hr>
+                </form>
+            </aside>
+            <aside id="right">
+                <h1>Twój samochód</h1>
+                <img src="szary.png" alt="foto" id="prawe-zdjecie">
+                <h1>Wycena</h1>
+                <p id="wycena">Cena bazowa 75000zł</p>
+            </aside>
+            <section>
+                <footer>
+                    <p><i>Autor strony: 00000000000</i></p>
+                </footer>
+            </section>
+        </section>
+    </main>
+</body>
+<script src="js.js"></script>
+</html>

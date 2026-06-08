@@ -13,7 +13,13 @@ session_start();
 <?php
 $db = connect_to_db();
 
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['error_message'] = "Musisz być zalogowany, żeby zobaczyć tę stronę!";
+    redirect("login.php");
+}
 $user_id = $_SESSION['user_id'];
+
+
 $is_admin = $db->query("SELECT users.role FROM users WHERE users.id = $user_id");
 if (!$is_admin->fetch_assoc() == "ROLE_ADMIN"){
     $_SESSION['error_message'] = "Nie masz uprawnień do tej strony!";

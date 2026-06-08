@@ -1,68 +1,115 @@
-import { StatusBar } from 'expo-status-bar';
-import * as React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, Image, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import {
+  DrawerContentScrollView,
+  DrawerItem,
+} from '@react-navigation/drawer';
+
+import Plus from '../assets/plus.png';
+import ServerConfigDialog from './Components/ServerConfigDialog';
 import Screen01 from './screens/Screen01';
 import Screen02 from './screens/Screen02';
 import Screen03 from './screens/Screen03';
-import Plus from "../assets/plus.png"
-import {
- DrawerContentScrollView,
- DrawerItemList,
- DrawerItem
-} from '@react-navigation/drawer';
-
+import Screen04 from './screens/Screen04';
 
 const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props) {
+  const { openServerDialog } = props;
+
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItem
-      label="Notatki"
-      icon={() => <Image />}
-      onPress={() => props.navigation.navigate("Screen02")}
-      />
-      
-      <DrawerItem
-      label="Dodaj notatkę"
-      icon={() => <Image />}
-      onPress={() => props.navigation.navigate("Screen01")}
+        label="Notatki"
+        icon={() => null}
+        onPress={() => props.navigation.navigate('Screen02')}
       />
 
       <DrawerItem
-      label="Dodaj kategorię"
-      icon={() => <Image />}
-      onPress={() => props.navigation.navigate("Screen03")}
+        label="Dodaj notatkę"
+        icon={() => (
+          <Image source={Plus} style={styles.drawerIcon} />
+        )}
+        onPress={() => props.navigation.navigate('Screen01')}
       />
 
       <DrawerItem
-      label="Info"
-      icon={() => <Image />}
-      onPress={() => alert("Autor: Filip Gębala")}
+        label="Dodaj kategorię"
+        icon={() => (
+          <Image source={Plus} style={styles.drawerIcon} />
+        )}
+        onPress={() => props.navigation.navigate('Screen03')}
+      />
+
+      <DrawerItem
+        label="Adres serwera"
+        icon={() => null}
+        onPress={openServerDialog}
+      />
+
+      <DrawerItem
+        label="Info"
+        icon={() => null}
+        onPress={() =>
+          Alert.alert('Info', 'Autor: Filip Gębala')
+        }
       />
     </DrawerContentScrollView>
   );
 }
 
 export default function App() {
+  const [dialogVisible, setDialogVisible] = useState(false);
+
   return (
-    <NavigationContainer>
-        <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
-            <Drawer.Screen name="Screen01" component={Screen01}  />
-            <Drawer.Screen name="Screen02" component={Screen02} />
-            <Drawer.Screen name="Screen03" component={Screen03} />
+    <>
+      <NavigationContainer>
+        <Drawer.Navigator
+          initialRouteName="Screen02"
+          drawerContent={(props) => (
+            <CustomDrawerContent
+              {...props}
+              openServerDialog={() => setDialogVisible(true)}
+            />
+          )}
+        >
+          <Drawer.Screen
+            name="Screen01"
+            component={Screen01}
+            options={{ title: 'Dodaj notatkę' }}
+          />
+          <Drawer.Screen
+            name="Screen02"
+            component={Screen02}
+            options={{ title: 'Notatki' }}
+          />
+          <Drawer.Screen
+            name="Screen03"
+            component={Screen03}
+            options={{ title: 'Dodaj kategorię' }}
+          />
+          <Drawer.Screen
+            name="Screen04"
+            component={Screen04}
+            options={{ title: 'Edytuj notatkę' }}
+          />
         </Drawer.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+
+      <ServerConfigDialog
+        visible={dialogVisible}
+        onClose={() => setDialogVisible(false)}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  drawerIcon: {
+    width: 22,
+    height: 22,
+    resizeMode: 'contain',
   },
 });

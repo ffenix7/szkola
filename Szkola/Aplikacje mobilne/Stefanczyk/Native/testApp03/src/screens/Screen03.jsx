@@ -1,14 +1,14 @@
 import React from 'react';
 import {
-  View,
-  Text,
-  TextInput,
+  Alert,
   Button,
   StyleSheet,
-  Alert,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 
-import * as SecureStore from 'expo-secure-store';
+import { addCategory as saveCategory } from '../utils/storage';
 
 const Screen03 = ({ navigation }) => {
   const [category, setCategory] = React.useState('');
@@ -20,26 +20,9 @@ const Screen03 = ({ navigation }) => {
         return;
       }
 
-      const storedCategories =
-        await SecureStore.getItemAsync('categories');
+      const result = await saveCategory(category.trim());
 
-      let categories = [];
-
-      if (storedCategories) {
-        const parsed = JSON.parse(storedCategories);
-
-        categories = Array.isArray(parsed)
-          ? parsed
-          : [];
-      }
-
-      const exists = categories.find(
-        item =>
-          item.name.toLowerCase() ===
-          category.toLowerCase()
-      );
-
-      if (exists) {
+      if (!result.added) {
         Alert.alert(
           'Błąd',
           'Taka kategoria już istnieje'
@@ -47,39 +30,22 @@ const Screen03 = ({ navigation }) => {
         return;
       }
 
-      const newCategory = {
-        id: Date.now(),
-        name: category,
-      };
-
-      categories.push(newCategory);
-
-      await SecureStore.setItemAsync(
-        'categories',
-        JSON.stringify(categories)
-      );
-
-      console.log(
-        'Zapisane kategorie:',
-        categories
-      );
+      console.log('Zapisane kategorie:', result.categories);
 
       setCategory('');
-
       navigation.navigate('Screen02');
-    } catch (e) {
-      console.log(
-        'Error saving category:',
-        e
+    } catch (error) {
+      console.log('Error saving category:', error);
+      Alert.alert(
+        'Błąd',
+        'Nie udało się zapisać kategorii'
       );
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>
-        Dodaj kategorię
-      </Text>
+      <Text style={styles.header}>Dodaj kategorię</Text>
 
       <TextInput
         style={styles.input}
@@ -88,10 +54,7 @@ const Screen03 = ({ navigation }) => {
         onChangeText={setCategory}
       />
 
-      <Button
-        title="Dodaj kategorię"
-        onPress={addCategory}
-      />
+      <Button title="Dodaj kategorię" onPress={addCategory} />
     </View>
   );
 };

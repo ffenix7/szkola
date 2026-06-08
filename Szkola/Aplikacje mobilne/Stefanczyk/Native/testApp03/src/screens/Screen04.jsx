@@ -16,7 +16,11 @@ import {
   saveNotes,
 } from '../utils/storage';
 
-const Screen01 = ({ navigation }) => {
+const sameId = (first, second) =>
+  String(first) === String(second);
+
+const Screen04 = ({ navigation, route }) => {
+  const noteId = route.params?.noteId;
   const [title, setTitle] = React.useState('');
   const [desc, setDesc] = React.useState('');
   const [cat, setCat] = React.useState(
@@ -25,57 +29,79 @@ const Screen01 = ({ navigation }) => {
   const [categories, setCategories] = React.useState([
     DEFAULT_CATEGORY,
   ]);
+  const [noteFound, setNoteFound] = React.useState(true);
+
+  const loadData = async () => {
+    try {
+      const [storedNotes, storedCategories] =
+        await Promise.all([getNotes(), getCategories()]);
+
+      const selectedNote = storedNotes.find((note) =>
+        sameId(note.id, noteId)
+      );
+
+      setCategories(storedCategories);
+
+      if (!selectedNote) {
+        setNoteFound(false);
+        return;
+      }
+
+      setNoteFound(true);
+      setTitle(selectedNote.title);
+      setDesc(selectedNote.desc);
+      setCat(selectedNote.category || DEFAULT_CATEGORY.name);
+    } catch (error) {
+      console.log('Błąd ładowania notatki:', error);
+      Alert.alert(
+        'Błąd',
+        'Nie udało się wczytać notatki'
+      );
+    }
+  };
 
   React.useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const storedCategories = await getCategories();
-
-        setCategories(storedCategories);
-        setCat(storedCategories[0].name);
-      } catch (error) {
-        console.log('Błąd ładowania kategorii:', error);
-        setCategories([DEFAULT_CATEGORY]);
-        setCat(DEFAULT_CATEGORY.name);
-      }
-    };
-
     const unsubscribe = navigation.addListener(
       'focus',
-      loadCategories
+      loadData
     );
 
-    loadCategories();
+    loadData();
 
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, noteId]);
 
-  const addNote = async () => {
+  const saveChanges = async () => {
     if (
       title.trim() === '' ||
       desc.trim() === '' ||
       cat.trim() === ''
     ) {
-      Alert.alert('Błąd', 'Uzupełnij wszystkie pola');
+      Alert.alert(
+        'Błąd',
+        'Wszystkie pola muszą być uzupełnione'
+      );
       return;
     }
 
     try {
-      const notes = await getNotes();
-      const newNote = {
-        id: Date.now(),
-        title: title.trim(),
-        desc: desc.trim(),
-        category: cat,
-        createdAt: new Date().toISOString(),
-      };
+      const storedNotes = await getNotes();
+      const updatedNotes = storedNotes.map((note) => {
+        if (sameId(note.id, noteId)) {
+          return {
+            ...note,
+            title: title.trim(),
+            desc: desc.trim(),
+            category: cat,
+          };
+        }
 
-      await saveNotes([...notes, newNote]);
+        return note;
+      });
 
-      setTitle('');
-      setDesc('');
-      setCat(categories[0]?.name || DEFAULT_CATEGORY.name);
+      await saveNotes(updatedNotes);
 
+      Alert.alert('Sukces', 'Notatka została zapisana');
       navigation.navigate('Screen02');
     } catch (error) {
       console.log('Błąd zapisu notatki:', error);
@@ -86,9 +112,21 @@ const Screen01 = ({ navigation }) => {
     }
   };
 
+  if (!noteFound) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.header}>Nie znaleziono notatki</Text>
+        <Button
+          title="Wróć do notatek"
+          onPress={() => navigation.navigate('Screen02')}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Dodaj notatkę</Text>
+      <Text style={styles.header}>Edytuj notatkę</Text>
 
       <TextInput
         style={styles.input}
@@ -120,12 +158,12 @@ const Screen01 = ({ navigation }) => {
         </Picker>
       </View>
 
-      <Button title="Dodaj notatkę" onPress={addNote} />
+      <Button title="Zapisz zmiany" onPress={saveChanges} />
     </View>
   );
 };
 
-export default Screen01;
+export default Screen04;
 
 const styles = StyleSheet.create({
   container: {
@@ -151,7 +189,7 @@ const styles = StyleSheet.create({
   },
 
   textArea: {
-    height: 120,
+    height: 150,
     textAlignVertical: 'top',
   },
 

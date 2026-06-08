@@ -18,6 +18,32 @@ INCOME_COLOR = "99FF99"
 OUTCOME_COLOR = "FF9999"
 HEADER_COLOR = "CCCCCC"
 ROW_COLOR = "ECF0F1"
+ROW_PAIR_COLOR = 'ECF0F1'
+
+def add_excel_transaction(path: str, record: dict):
+    excel_init(path)
+    wb = load_workbook(path)
+    ws = wb.active
+    new_row = ws.max_row + 1
+
+    if new_row % 2:
+        bg = PatternFill(fgColor=ROW_PAIR_COLOR)
+    else:
+        bg = PatternFill(fgColor=ROW_COLOR)
+
+    sum_color = INCOME_COLOR if record["Type"] == "Income" else OUTCOME_COLOR
+    value = [record['Date'], record['Type'], record['Category'], record['Amount'], record['Description']]
+
+    for col, val in enumerate(value, start=1):
+        cell = ws.cell(row=new_row, column=col, value=val)
+        cell.fill = bg
+        if col == 4:  # Amount column
+            cell.font = Font(bold=True, color=sum_color)
+
+    wb.save(path)
+
+def generate_report(path: str, report_path: str):
+    pass
 
 def excel_init(path: str):
     if os.path.exists(path):
@@ -69,6 +95,38 @@ class BudgetManager():
         self.build_list()
         self.build_footer()
         self.refresh_list()
+
+    def build_form(self):
+        frame = tk.LabelFrame(self.left, text="Add Transaction", padx=8, pady=8, bg="#ECF0F1")
+        frame.pack(fill=tk.X, padx=10, pady=10)
+
+        fields = [
+            ("Date (YYYY-MM-DD):", "date"),
+            ("Type:", "type"),
+            ("Category:", "category_menu"),
+            ("Amount:", "amount"),
+            ("Description:", "desc")
+        ]
+
+        self.variables: dict = {}
+
+        for label, key in fields:
+            tk.Label(frame, text=label, bg="#ECF0F1").grid(row=fields.index((label, key)), column=0, sticky=tk.W)
+
+            if key == "type":
+                self.variables[key] = tk.StringVar(value="Income")
+                widget = ttk.Combobox(frame, values=["Income", "Outcome"], textvariable=self.variables[key], state="readonly")
+            elif key == "category_menu":
+                self.variables[key] = tk.StringVar(value=INCOME_CATEGORIES[0])
+                widget = ttk.Combobox(frame, values=INCOME_CATEGORIES, textvariable=self.variables[key], state="readonly")
+            else:
+                widget = tk.Entry(frame)
+                self.entries[key] = widget
+
+            widget.pack(pady=4)
+            tk.Button(frame, text="Add and save to excel", command=self.add_transaction, bg="#27AE60", fg="white").grid(row=5, column=0, columnspan=2, pady=8)
+            
+
     
     def build_gui(self):
         header = tk.Frame(self.root, bg="#2C3E50", height=50)

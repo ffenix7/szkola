@@ -1,21 +1,21 @@
-import React, {
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 import {
-  Modal,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-} from 'react-native';
-
-import * as SecureStore from 'expo-secure-store';
-
-import { Picker } from '@react-native-picker/picker';
+  DEFAULT_CATEGORY,
+  getCategories,
+  getNotes,
+  saveNotes,
+} from '../utils/storage';
 
 const NoteModal = ({
   visible,
@@ -23,68 +23,35 @@ const NoteModal = ({
   onClose,
   onSave,
 }) => {
-  const [title, setTitle] =
-    useState('');
-
-  const [desc, setDesc] =
-    useState('');
-
-  const [cat, setCat] =
-    useState('');
-
-  const [categories, setCategories] =
-    useState([]);
+  const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
+  const [cat, setCat] = useState(DEFAULT_CATEGORY.name);
+  const [categories, setCategories] = useState([
+    DEFAULT_CATEGORY,
+  ]);
 
   useEffect(() => {
     if (note) {
       setTitle(note.title);
       setDesc(note.desc);
-      setCat(note.category);
+      setCat(note.category || DEFAULT_CATEGORY.name);
     }
   }, [note]);
 
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const storedCats =
-          await SecureStore.getItemAsync(
-            'categories'
-          );
-
-        if (storedCats) {
-          const parsed = JSON.parse(
-            storedCats
-          );
-
-          if (
-            Array.isArray(parsed) &&
-            parsed.length > 0
-          ) {
-            setCategories(parsed);
-          } else {
-            setCategories([
-              { name: 'Ogólne' },
-            ]);
-          }
-        } else {
-          setCategories([
-            { name: 'Ogólne' },
-          ]);
-        }
-      } catch (e) {
-        console.log(
-          'Błąd ładowania kategorii:',
-          e
-        );
-
-        setCategories([
-          { name: 'Ogólne' },
-        ]);
+        setCategories(await getCategories());
+      } catch (error) {
+        console.log('Błąd ładowania kategorii:', error);
+        setCategories([DEFAULT_CATEGORY]);
       }
     };
 
-    loadCategories();
-  }, []);
+    if (visible) {
+      loadCategories();
+    }
+  }, [visible]);
 
   const saveChanges = async () => {
     if (
@@ -96,65 +63,40 @@ const NoteModal = ({
         'Błąd',
         'Wszystkie pola muszą być uzupełnione'
       );
-
       return;
     }
 
     try {
-      const storedNotes =
-        await SecureStore.getItemAsync(
-          'notes'
-        );
+      const storedNotes = await getNotes();
 
-      if (!storedNotes) {
-        Alert.alert(
-          'Błąd',
-          'Nie znaleziono notatek'
-        );
-
+      if (!storedNotes.length) {
+        Alert.alert('Błąd', 'Nie znaleziono notatek');
         return;
       }
 
-      const parsedNotes = JSON.parse(
-        storedNotes
-      );
-
-      const updatedNotes = parsedNotes.map(
-        (item) => {
-          if (item.id === note.id) {
-            return {
-              ...item,
-              title: title.trim(),
-              desc: desc.trim(),
-              category: cat,
-            };
-          }
-
-          return item;
+      const updatedNotes = storedNotes.map((item) => {
+        if (item.id === note.id) {
+          return {
+            ...item,
+            title: title.trim(),
+            desc: desc.trim(),
+            category: cat,
+          };
         }
-      );
 
-      await SecureStore.setItemAsync(
-        'notes',
-        JSON.stringify(updatedNotes)
-      );
+        return item;
+      });
+
+      await saveNotes(updatedNotes);
 
       if (onSave) {
         onSave();
       }
 
-      Alert.alert(
-        'Sukces',
-        'Notatka została zapisana'
-      );
-
+      Alert.alert('Sukces', 'Notatka została zapisana');
       onClose();
-    } catch (e) {
-      console.log(
-        'Błąd zapisu notatki:',
-        e
-      );
-
+    } catch (error) {
+      console.log('Błąd zapisu notatki:', error);
       Alert.alert(
         'Błąd',
         'Nie udało się zapisać notatki'
@@ -165,21 +107,12 @@ const NoteModal = ({
   if (!note) return null;
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-    >
+    <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
         <View style={styles.modal}>
-          <Text style={styles.header}>
-            Edytuj notatkę
-          </Text>
+          <Text style={styles.header}>Edytuj notatkę</Text>
 
-          <Text style={styles.label}>
-            Tytuł
-          </Text>
-
+          <Text style={styles.label}>Tytuł</Text>
           <TextInput
             style={styles.input}
             value={title}
@@ -187,41 +120,30 @@ const NoteModal = ({
             placeholder="Tytuł notatki"
           />
 
-          <Text style={styles.label}>
-            Opis
-          </Text>
-
+          <Text style={styles.label}>Opis</Text>
           <TextInput
-            style={[
-              styles.input,
-              styles.textArea,
-            ]}
+            style={[styles.input, styles.textArea]}
             value={desc}
             onChangeText={setDesc}
             placeholder="Opis notatki"
             multiline
           />
 
-          <Text style={styles.label}>
-            Kategoria
-          </Text>
-
+          <Text style={styles.label}>Kategoria</Text>
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={cat}
-              onValueChange={(
-                itemValue
-              ) => setCat(itemValue)}
+              onValueChange={(itemValue) =>
+                setCat(itemValue)
+              }
             >
-              {categories.map(
-                (item, index) => (
-                  <Picker.Item
-                    key={index}
-                    label={item.name}
-                    value={item.name}
-                  />
-                )
-              )}
+              {categories.map((item) => (
+                <Picker.Item
+                  key={item.id}
+                  label={item.name}
+                  value={item.name}
+                />
+              ))}
             </Picker>
           </View>
 
@@ -229,18 +151,14 @@ const NoteModal = ({
             style={styles.saveButton}
             onPress={saveChanges}
           >
-            <Text style={styles.buttonText}>
-              Zapisz zmiany
-            </Text>
+            <Text style={styles.buttonText}>Zapisz zmiany</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.closeButton}
             onPress={onClose}
           >
-            <Text style={styles.buttonText}>
-              Zamknij
-            </Text>
+            <Text style={styles.buttonText}>Zamknij</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -253,8 +171,7 @@ export default NoteModal;
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor:
-      'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -263,7 +180,7 @@ const styles = StyleSheet.create({
   modal: {
     width: '100%',
     backgroundColor: 'white',
-    borderRadius: 20,
+    borderRadius: 8,
     padding: 20,
   },
 
@@ -286,7 +203,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 10,
+    borderRadius: 8,
     padding: 12,
     backgroundColor: 'white',
     fontSize: 16,
@@ -300,7 +217,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 10,
+    borderRadius: 8,
     marginTop: 5,
     overflow: 'hidden',
   },
@@ -308,7 +225,7 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: '#16a34a',
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: 'center',
     marginTop: 25,
     marginBottom: 10,
@@ -317,7 +234,7 @@ const styles = StyleSheet.create({
   closeButton: {
     backgroundColor: '#2563eb',
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: 'center',
   },
 
