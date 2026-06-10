@@ -35,9 +35,7 @@ const ServerConfigDialog = ({ visible, onClose }) => {
 
     if (
       !cleanIp ||
-      !Number.isInteger(portNumber) ||
-      portNumber < 1 ||
-      portNumber > 65535
+      !Number.isInteger(portNumber)
     ) {
       Alert.alert(
         'Błąd',

@@ -13,6 +13,7 @@ import Screen01 from './screens/Screen01';
 import Screen02 from './screens/Screen02';
 import Screen03 from './screens/Screen03';
 import Screen04 from './screens/Screen04';
+import CalendarScreen from './screens/CalendarScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -41,6 +42,14 @@ function CustomDrawerContent(props) {
           <Image source={Plus} style={styles.drawerIcon} />
         )}
         onPress={() => props.navigation.navigate('Screen03')}
+      />
+
+      <DrawerItem
+        label="Kalendarz"
+        icon={() => null}
+        onPress={() =>
+          props.navigation.navigate('CalendarScreen')
+        }
       />
 
       <DrawerItem
@@ -94,6 +103,11 @@ export default function App() {
             name="Screen04"
             component={Screen04}
             options={{ title: 'Edytuj notatkę' }}
+          />
+          <Drawer.Screen
+            name="CalendarScreen"
+            component={CalendarScreen}
+            options={{ title: 'Kalendarz' }}
           />
         </Drawer.Navigator>
       </NavigationContainer>

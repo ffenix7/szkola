@@ -56,19 +56,26 @@ export const normalizeCategories = (items) => {
 export const normalizeNotes = (items) => {
   const source = Array.isArray(items) ? items : [];
 
-  return source.map((note, index) => ({
-    id:
-      note?.id ??
-      note?._id ??
-      `${Date.now()}-${index}`,
-    title: String(note?.title ?? '').trim(),
-    desc: String(note?.desc ?? '').trim(),
-    category:
-      String(note?.category ?? '').trim() ||
-      DEFAULT_CATEGORY.name,
-    createdAt:
-      note?.createdAt ?? new Date().toISOString(),
-  }));
+  return source.map((note, index) => {
+    const createdAt =
+      note?.createdAt ?? new Date().toISOString();
+
+    return {
+      id:
+        note?.id ??
+        note?._id ??
+        `${Date.now()}-${index}`,
+      title: String(note?.title ?? '').trim(),
+      desc: String(note?.desc ?? '').trim(),
+      category:
+        String(note?.category ?? '').trim() ||
+        DEFAULT_CATEGORY.name,
+      createdAt,
+      date:
+        note?.date ??
+        String(createdAt).split('T')[0],
+    };
+  });
 };
 
 export const getCategories = async () => {
