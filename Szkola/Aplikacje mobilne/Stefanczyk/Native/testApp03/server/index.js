@@ -40,8 +40,8 @@ app.post('/api/task/backup', async (req, res) => {
   });
 });
 
-app.patch('/api/task/:id', async (req, res) => {
-  console.log('patch');
+app.post('/api/task/update/:id', async (req, res) => {
+  console.log('update');
   const result = await updateTask(req.params.id, req.body);
   res.status(200).json(result);
 });

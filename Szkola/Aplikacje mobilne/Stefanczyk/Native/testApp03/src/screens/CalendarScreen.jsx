@@ -79,7 +79,7 @@ const buildMarkedDates = (notes, selectedDate) => {
 
     acc[date] = {
       marked: true,
-      dotColor: '#ff85de',
+      dotColor: '#e30202',
     };
 
     return acc;
@@ -89,7 +89,7 @@ const buildMarkedDates = (notes, selectedDate) => {
     marked[selectedDate] = {
       ...marked[selectedDate],
       selected: true,
-      selectedColor: '#00bafa',
+      selectedColor: '#00cb2f',
       selectedTextColor: 'white',
       dotColor: '#ffffff',
     };
@@ -109,9 +109,9 @@ const getRandomDateLastWeek = () => {
   };
 };
 
-const makeUniqueTitle = (base, notes) => {
+const makeUniqueTitle = (prefix, notes) => {
   const titles = notes.map((note) => note.title);
-  let candidate = base;
+  let candidate = prefix;
   let suffix = 1;
 
   while (titles.includes(candidate)) {
@@ -208,7 +208,7 @@ const CalendarScreen = ({ navigation }) => {
           getRandomDateLastWeek();
 
         const baseTitle =
-          `Losowa_notatka_${i + 1}_${timestamp}`;
+          `Losowa_notatka_${i}`;
         const title = makeUniqueTitle(baseTitle, [
           ...notes,
           ...newNotes,
@@ -218,7 +218,7 @@ const CalendarScreen = ({ navigation }) => {
           id: `${Date.now()}-${i}`,
           title,
           desc:
-            `Przykładowa notatka stworzona automatycznie dla daty ${date}.`,
+            `Losowa notatka w dniu ${date}.`,
           category: DEFAULT_CATEGORY.name,
           date,
           createdAt: new Date(
@@ -277,7 +277,7 @@ const CalendarScreen = ({ navigation }) => {
 
       {selectedDate && dayNotes.length === 0 ? (
         <Text style={styles.emptyText}>
-          Brak notatek dla wybranego dnia.
+          Nie ma notatek w tym dniu.
         </Text>
       ) : null}
 
