@@ -23,12 +23,8 @@ const Screen04 = ({ navigation, route }) => {
   const noteId = route.params?.noteId;
   const [title, setTitle] = React.useState('');
   const [desc, setDesc] = React.useState('');
-  const [cat, setCat] = React.useState(
-    DEFAULT_CATEGORY.name
-  );
-  const [categories, setCategories] = React.useState([
-    DEFAULT_CATEGORY,
-  ]);
+  const [cat, setCat] = React.useState(DEFAULT_CATEGORY.name);
+  const [categories, setCategories] = React.useState([DEFAULT_CATEGORY,]);
   const [noteFound, setNoteFound] = React.useState(true);
 
   const loadData = async () => {

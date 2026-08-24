@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   },
 
   generateButton: {
-    backgroundColor: '#ff85de',
+    backgroundColor: '#3e37c9',
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',

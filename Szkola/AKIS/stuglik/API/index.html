@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sport API Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">TheSportsDB API</p>
+        <h1>Sport API Dashboard</h1>
+      </div>
+      <a class="source-link" href="https://www.thesportsdb.com/documentation" target="_blank" rel="noreferrer">
+        Dokumentacja API
+      </a>
+    </header>
+
+    <main>
+      <section class="hero" id="hero">
+        <div class="hero-overlay">
+          <div class="hero-copy">
+            <p class="eyebrow">Dane z publicznego sportowego API</p>
+            <h2 id="leagueTitle">Premier League</h2>
+            <p id="leagueSubtitle">Wybierz ligę i zobacz aktualne dane pobierane z zewnętrznego serwisu.</p>
+          </div>
+
+          <form class="controls" id="leagueForm">
+            <label for="leagueSelect">Liga</label>
+            <div class="control-row">
+              <select id="leagueSelect" name="league"></select>
+              <button type="submit" id="loadButton">Pobierz dane</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="status-bar" aria-live="polite">
+        <span id="statusText">Ladowanie danych...</span>
+      </section>
+
+      <section class="summary-grid" id="summaryGrid">
+        <article class="summary-card">
+          <span class="summary-label">Druzyny</span>
+          <strong id="teamCount">-</strong>
+          <p>Liczba zespolow pobrana z API.</p>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Nastepny mecz</span>
+          <strong id="nextMatch">-</strong>
+          <p id="nextMatchDate">Brak danych.</p>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Ostatni wynik</span>
+          <strong id="lastMatch">-</strong>
+          <p id="lastMatchScore">Brak danych.</p>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel table-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Tabela</p>
+              <h2>Klasyfikacja ligowa</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Druzyna</th>
+                  <th>M</th>
+                  <th>W</th>
+                  <th>R</th>
+                  <th>P</th>
+                  <th>+/-</th>
+                  <th>PKT</th>
+                </tr>
+              </thead>
+              <tbody id="standingsBody">
+                <tr>
+                  <td colspan="8">Ladowanie tabeli...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside class="panel details-panel">
+          <p class="eyebrow">O projekcie</p>
+          <h2>Co robi ta strona?</h2>
+          <p>
+            Strona laczy sie z TheSportsDB, pobiera informacje o wybranej lidze, a nastepnie pokazuje
+            tabele, najblizszy mecz, ostatni wynik i liste klubow z herbami.
+          </p>
+          <dl>
+            <div>
+              <dt>Format</dt>
+              <dd>JSON</dd>
+            </div>
+            <div>
+              <dt>Autoryzacja</dt>
+              <dd>Darmowy klucz publiczny</dd>
+            </div>
+            <div>
+              <dt>Tematyka</dt>
+              <dd>Sport, pilka nozna</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <section>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Kluby</p>
+            <h2>Druzyny w lidze</h2>
+          </div>
+        </div>
+        <div class="teams-grid" id="teamsGrid"></div>
+      </section>
+    </main>
+
+    <template id="teamCardTemplate">
+      <article class="team-card">
+        <img class="team-badge" src="" alt="" />
+        <div>
+          <h3></h3>
+          <p class="team-meta"></p>
+          <p class="team-description"></p>
+          <a class="team-link" href="#" target="_blank" rel="noreferrer">Strona klubu</a>
+        </div>
+      </article>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
