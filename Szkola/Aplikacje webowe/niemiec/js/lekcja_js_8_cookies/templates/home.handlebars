@@ -1,0 +1,26 @@
+<div class="banner">
+	{{#if email}}
+		Zalogowany jako: {{email}}
+	{{/if}}
+</div>
+
+<h1>Example App: Home</h1>
+<p>Pozdrowienia dla {{email}}</p>
+<button id="theme">Theme</button>
+
+<script>
+	const button = document.getElementById('theme');
+	let theme = 0
+	button.addEventListener('click', () => {
+    theme = !theme;
+    if (theme) {
+        document.cookie = "theme=dark";
+        document.body.style.backgroundColor = 'red';
+        document.body.style.color = 'white';
+    } else {
+        document.cookie = "theme=light";
+        document.body.style.backgroundColor = '';
+        document.body.style.color = '';
+    }
+});
+</script>

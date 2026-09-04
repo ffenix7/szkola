@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block page_title %}Menedżer Zadań - Strona Główna{% endblock %}
+
+{% block page_content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Moje Zadania</h1>
+        <a href="{{ url_for('add_task') }}" class="btn btn-success btn-lg"><i class="bi bi-plus-circle me-2"></i>Dodaj Zadanie</a>
+    </div>
+
+    {% if tasks %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tytuł</th>
+                        <th>Opis</th>
+                        <th>Priorytet</th>
+                        <th>Data utworzenia </th>
+                        <th>Status</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <td class="{% if task.completed %}text-decoration-line-through {% endif %}">
+                            <strong>{{ task.title }}</strong>
+                        </td>
+                        <td class="{% if task.completed %}text-decoration-line-through {% endif %}">
+                            {{ task.description if task.description else '-' }}
+                        </td>
+                        <td>
+                            {% if task.priority == 'wysoki' %}
+                                <span class="badge bg-danger">Wysoki</span>
+                            {% elif task.priority == 'średni' %}
+                                <span class="badge bg-warning text-dark">Średni</span>
+                            {% else %}
+                                <span class="badge bg-success">Niski</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ task.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                        </td>
+                        <td>
+                            {% if task.completed %}
+                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Ukończone</span>
+                            {% else %}
+                                <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> Do zrobienia</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-primary m-1" title="Edytuj"><i class="bi bi-pencil-square"></i></a>
+                                {% if task.completed %}
+                                    <a href="{{ url_for('toggle_task', task_id=task.id) }}" class="btn btn-secondary m-1 " title="Przywróć"><i class="bi bi-arrow-counterclockwise"></i></a>
+                                {% else %}
+                                    <a href="{{ url_for('toggle_task', task_id=task.id) }}" class="btn btn-success m-1" title="Ukończ"><i class="bi bi-check-circle"></i></a>
+                                {% endif %}
+                                <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger m-1" title="Usuń" onclick="return confirm('Czy na pewno chcesz usunąć to zadanie?')"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Statystyki</h3>
+                <div class="row g-3">
+                    <div class="col-sm-4 col-lg-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Łączna liczba</h5>
+                                <p class="display-4 text-primary">{{ total_tasks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-lg-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Ukończone</h5>
+                                <p class="display-4 text-success">{{ completed_tasks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-lg-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Procent ukończenia</h5>
+                                <p class="display-4 text-info">{{ completion_rate }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">Brak zadań</h4>
+            <p>Nie masz żadnych zadań. <a href="{{ url_for('add_task') }}">Dodaj nowe zadanie</a>, aby zacząć!</p>
+        </div>
+    {% endif %}
+{% endblock %}

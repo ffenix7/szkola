@@ -16,22 +16,5 @@
     "question": "What is the time complexity of binary search in a sorted array?",
     "options": ["O(1)", "O(n)", "O(log n)", "O(n log n)"],
     "answer": "O(log n)"
-  },
-  {
-    "id": 4,
-    "question": "In Python, what does the method 'list.append(x)' do?",
-    "options": [
-      "Adds x at the beginning of the list",
-      "Adds x at the end of the list",
-      "Removes the first element equal to x",
-      "Creates a copy of the list with x included"
-    ],
-    "answer": "Adds x at the end of the list"
-  },
-  {
-    "id": 5,
-    "question": "Which of the following is NOT an OOP principle?",
-    "options": ["Encapsulation", "Polymorphism", "Recursion", "Inheritance"],
-    "answer": "Recursion"
   }
 ]

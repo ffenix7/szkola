@@ -1,0 +1,57 @@
+{% extends 'bootstrap/base.html' %}
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a href="{{ url_for('shop.index') }}" class="navbar-brand mx-5">Home</a>
+            <ul class="nav justify-content-end">
+                <li class="nav-item">Użytkownik, {{ current_user.email }}</li>
+            </ul>
+
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-secondary mx-5">Wyloguj</a>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        <div class="d-flex align-items-center justify-content-between">
+            <h2 class="mb-0">Zamówienia</h2>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('shop.index') }}" class="btn btn-sm btn-outline-secondary">Sklep</a>
+                <a href="{{ url_for('shop.cart') }}" class="btn btn-sm btn-outline-secondary">Koszyk</a>
+            </div>
+        </div>
+
+        
+    </div>
+    {% if not orders %}
+        <div class="alert alert-info" role="alert">
+            Nie masz jeszcze żadnych zamówień.
+        </div>
+    {% else %}
+        {% for order in orders %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    Zamówienie #{{ order.id }} - {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Zamówione produkty:</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for item in items_by_order.get(order.id, []) %}
+                            {% set product = products_by_id.get(item.product_id) %}
+                            <li class="list-group-item">
+                                {{ product.name if product else 'Produkt usunięty' }} - {{ item.quantity }} szt., wartość pozycji: {{ "%.2f" | format(item.price_pln) }} zł
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="mt-3">
+                        <h5 class="card-text">Łączna wartość: {{ "%.2f" | format(order.total_price) }} zł</h5>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

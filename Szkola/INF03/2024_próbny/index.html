@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Neon</title>
+    <link rel="stylesheet" href="styl.css">
+</head>
+<body>
+    <section class="baner">
+        <img src="baner.jpg" alt="grafika z logiem">
+    </section>
+    <section class="upper">
+        <p id="upper_text">Egzamin</p>
+    </section>
+
+    <main>
+    <aside class="left">
+        <label for="neon_textt">Treść neonu</label>
+        <input type="text" id="neon_text" max="10">
+        <button type="submit" onclick="change_upper()"">Zastosuj</button>
+    </aside>
+    <section class="middle">
+        <label>Kolor neonu</label><br>
+        <label for="R">R</label>
+        <input type="range" id="R" min="0" max="255" value="255" oninput="change_color()">
+        <br>
+        <label for="G">G</label>
+        <input type="range" id="G" min="0" max="255" value="0" oninput="change_color()">
+        <br>
+        <label for="B">B</label>
+        <input type="range" id="B" min="0" max="255" value="0" oninput="change_color()">
+    </section>
+    <aside class="right">
+        <label for="neon_size">Rozmiar neonu</label><br>
+        <input type="number" id="neon_size" min="0" max="300" value="100" step="5" oninput="change_size()">
+    </aside>
+    </main>
+    
+    <footer class="footer">
+        <p><a href="styl.css" target="_blank">Otwórz plik ze stylami CSS</a></p>
+        <p>Stronę wykonał: Filip Gębala</p>
+    </footer>
+</body>
+<script>
+    function change_upper(){
+        console.log("Działa")
+        const left_text = document.getElementById("neon_text")
+        const upper_text = document.getElementById("upper_text")
+        upper_text.innerText = left_text.value
+    }
+
+    function change_color(){
+        const upper_text = document.getElementById("upper_text")
+        const r = document.getElementById("R").value
+        const g = document.getElementById("G").value
+        const b = document.getElementById("B").value
+
+        upper_text.style.color = `rgb(${r},${g},${b})`
+    }
+
+    function change_size(){
+        const upper_text = document.getElementById("upper_text")
+        const size = document.getElementById("neon_size").value
+        console.log(size)
+        upper_text.style.fontSize = size + 'px'
+    }
+</script>
+</html>

@@ -1,0 +1,463 @@
+{% extends "bootstrap/base.html" %}
+
+{% block scripts %}
+    {{ super() }}
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+{% endblock %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a href="{{ url_for('auth.dashboard') }}" class="navbar-brand mx-5">Home</a>
+
+            <ul class="nav justify-content-end">
+                <li class="nav-item">Użytkownik, {{ current_user.email }}</li>
+            </ul>
+
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-info mx-5"><i class="bi bi-box-arrow-left pe-1"></i>Wyloguj</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="col-lg-12">
+            {% with messages = get_flashed_messages(with_categories=true)  %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="row mx-5">
+            <div class="col-lg-3 offset-lg-6">
+                <form action="{{ url_for('store.index') }}" method="get">
+                    <div class="input-group input-group-sm">
+                        <a href="{{ url_for('store.index', order=order, direction=direction) }}" class="btn btn-sm btn-secondary">Wyczyść</a>
+                        <input type="text" name="search" class="form-control" placeholder="Szukaj..." value="{{ search or '' }}">
+                        <input type="hidden" name="order" value="{{ order }}">
+                        <input type="hidden" name="direction" value="{{ direction }}">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-lg-12">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#add-product-modal" class="btn btn-sm btn-outline-secondary float-end">Dodaj produkt</a>
+                <a href="#" class="btn btn-sm btn-outline-success float-end mx-1" data-bs-toggle="modal" data-bs-target="#import-modal">Importuj</a>
+                <a href="{{ url_for('store.export_data') }}" class="btn btn-sm btn-outline-primary float-end mx-1">Eksportuj</a>
+                <a href="{{ url_for('store.dashboard_advanced') }}" class="btn btn-sm btn-outline-dark float-end mx-1">Dashboard Advanced</a>
+            </div>
+        </div>
+
+        {% if search %}
+            <div class="row mx-5">
+                <h5 class="border-bottom">Produkty</h5>
+                <table class="table table-hover mt-1">
+                    <thead>
+                        <tr>
+                            {% set columns = [
+                                ('id', 'ID'),
+                                ('symbol', 'Symbol'),
+                                ('name', 'Nazwa'),
+                                ('category', 'Kategoria'),
+                                ('brand', 'Producent'),
+                                ('model', 'Model'),
+                                ('quantity', 'Ilość'),
+                                ('weight_kg', 'Waga (kg)'),
+                                ('price_pln', 'Cena jednostkowa'),
+                                ('inventory_value_pln', 'Wartość')
+                            ] %}
+                            {% for col, label in columns %}
+                                {% set is_sorted = (order == col) %}
+                                {% set next_dir = 'desc' if is_sorted and direction == 'asc' else 'asc' %}
+                                <th scope="col" style="cursor:pointer;">
+                                    <a href="{{ url_for('store.index', page=pagination.page, search=search, order=col, direction=next_dir) }}"
+                                       class="text-decoration-none {% if is_sorted %}fw-bold text-primary{% endif %}">
+                                        {{ label }}
+                                        {% if is_sorted %}
+                                            {% if direction == 'asc' %}
+                                                <i class="bi bi-caret-up-fill"></i>
+                                            {% else %}
+                                                <i class="bi bi-caret-down-fill"></i>
+                                            {% endif %}
+                                        {% endif %}
+                                    </a>
+                                </th>
+                            {% endfor %}
+                            <th scope="col" class="text-end">Edycja</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for record in records %}    
+                            <tr>
+                                <td>{{ record.id }}</td>
+                                <td>{{ record.symbol }}</td>
+                                <td>{{ record.name }}</td>
+                                <td>{{ record.category }}</td>
+                                <td>{{ record.brand }}</td>
+                                <td>{{ record.model }}</td>
+                                <td>{{ record.quantity }}</td>
+                                <td>{{ record.weight_kg}}</td>
+                                <td>{{ record.price_pln}}</td>
+                                <td>{{ record.inventory_value_pln}}</td>
+                                
+                                <td class="text-end">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#info-product-modal-{{ record.id }}" class="text-primary"><i class="bi bi-card-text"></i></a>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modify-product-modal-{{ record.id }}" class="text-warning"><i class="bi bi-pencil-square"></i></a>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#delete-product-modal-{{ record.id }}" class="text-danger" ><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="11" class="text-center text-muted">Brak wyników wyszukiwania...</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
+                            <a href="{% if pagination.has_prev %}{{ url_for('store.index', page=pagination.prev_num, search=search, order=order, direction=direction) }}{% else %}#{% endif %}" class="page-link">Poprzednia</a>
+                        </li>
+
+                        {% for p in pagination.iter_pages(left_edge=1, left_current=2, right_current=2, right_edge=1) %}
+                            {% if p %}
+                                <li class="page-item {% if p == pagination.page %} active {% endif %}">
+                                    <a href="{{ url_for('store.index', page=p, search=search, order=order, direction=direction) }}" class="page-link">{{ p }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        <li class="page-item {% if not pagination.has_next %} disabled {% endif %}">
+                            <a href="{% if pagination.has_next %}{{ url_for('store.index', page=pagination.next_num, search=search, order=order, direction=direction) }}{% else %}#{% endif %}" class="page-link">Następna</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        {% else %}
+            <div class="row mx-5">
+                <h5 class="border-bottom">Produkty</h5>
+                <table class="table table-hover mt-1">
+                    <thead>
+                        <tr>
+                            {% set columns = [
+                                ('id', 'ID'),
+                                ('symbol', 'Symbol'),
+                                ('name', 'Nazwa'),
+                                ('category', 'Kategoria'),
+                                ('brand', 'Producent'),
+                                ('model', 'Model'),
+                                ('quantity', 'Ilość'),
+                                ('weight_kg', 'Waga (kg)'),
+                                ('price_pln', 'Cena jednostkowa'),
+                                ('inventory_value_pln', 'Wartość')
+                            ] %}
+                            {% for col, label in columns %}
+                                {% set is_sorted = (order == col) %}
+                                {% set next_dir = 'desc' if is_sorted and direction == 'asc' else 'asc' %}
+                                <th scope="col" style="cursor:pointer;">
+                                    <a href="{{ url_for('store.index', page=pagination.page, search=search, order=col, direction=next_dir) }}"
+                                       class="text-decoration-none {% if is_sorted %}fw-bold text-primary{% endif %}">
+                                        {{ label }}
+                                        {% if is_sorted %}
+                                            {% if direction == 'asc' %}
+                                                <i class="bi bi-caret-up-fill"></i>
+                                            {% else %}
+                                                <i class="bi bi-caret-down-fill"></i>
+                                            {% endif %}
+                                        {% endif %}
+                                    </a>
+                                </th>
+                            {% endfor %}
+                            <th scope="col" class="text-end">Edycja</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for record in records %}    
+                            <tr>
+                                <td>{{ record.id }}</td>
+                                <td>{{ record.symbol }}</td>
+                                <td>{{ record.name }}</td>
+                                <td>{{ record.category }}</td>
+                                <td>{{ record.brand }}</td>
+                                <td>{{ record.model }}</td>
+                                <td>{{ record.quantity }}</td>
+                                <td>{{ record.weight_kg}}</td>
+                                <td>{{ record.price_pln}}</td>
+                                <td>{{ record.inventory_value_pln}}</td>
+                                
+                                <td class="text-end">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#info-product-modal-{{ record.id }}" class="text-primary"><i class="bi bi-card-text"></i></a>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modify-product-modal-{{ record.id }}" class="text-warning"><i class="bi bi-pencil-square"></i></a>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#delete-product-modal-{{ record.id }}" class="text-danger" ><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item {% if not pagination.has_prev %} disabled {% endif %}">
+                            <a href="{% if pagination.has_prev %}{{ url_for('store.index', page=pagination.prev_num, search=search, order=order, direction=direction) }}{% else %}#{% endif %}" class="page-link">Poprzednia</a>
+                        </li>
+
+                        {% for p in pagination.iter_pages(left_edge=1, left_current=2, right_current=2, right_edge=1) %}
+                            {% if p %}
+                                <li class="page-item {% if p == pagination.page %} active {% endif %}">
+                                    <a href="{{ url_for('store.index', page=p, search=search, order=order, direction=direction) }}" class="page-link">{{ p }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        <li class="page-item {% if not pagination.has_next %} disabled {% endif %}">
+                            <a href="{% if pagination.has_next %}{{ url_for('store.index', page=pagination.next_num, search=search, order=order, direction=direction) }}{% else %}#{% endif %}" class="page-link">Następna</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+
+        <div class="modal fade" id="import-modal" tabindex="1" aria-labelledby="import-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ url_for('store.import_data') }}" enctype="multipart/form-data" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="import-modal-label">Import danych CSV</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="file" name="file" accept=".csv" required class="form-control-file">
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                            <button type="submit" class="btn btn-sm btn-primary">Importuj</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal face" id="add-product-modal" tabindex="-1" aria-labelledby="add-product-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ url_for('store.add_product') }}" method="post">
+                        {{ add_product_form.hidden_tag() }}
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="add-product-modal-label">Dodaj produkt</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                {{ add_product_form.symbol.label(class='form-label') }}
+                                {{ add_product_form.symbol(class='form-control') }}
+                            </div>
+                            <div class="form-group">
+                                {{ add_product_form.name.label(class='form-label') }}
+                                {{ add_product_form.name(class='form-control') }}
+                            </div>
+                            <div class="form-group">
+                                {{ add_product_form.category.label(class='form-label') }}
+                                {{ add_product_form.category(class='form-control') }}
+                            </div>
+                            <div class="form-group">
+                                {{ add_product_form.brand.label(class='form-label') }}
+                                {{ add_product_form.brand(class='form-control') }}
+                            </div>
+                            <div class="form-group">
+                                {{ add_product_form.model.label(class='form-label') }}
+                                {{ add_product_form.model(class='form-control') }}
+                            </div>
+                            <div class="form-group">
+                                {{ add_product_form.quantity.label(class='form-label') }}
+                                {{ add_product_form.quantity(class='form-control') }}
+                            </div>
+                            <div class="form-group">
+                                {{ add_product_form.weight_kg.label(class='form-label') }}
+                                {{ add_product_form.weight_kg(class='form-control') }}
+                            </div>
+                            <div class="form-group">
+                                {{ add_product_form.price_pln.label(class='form-label') }}
+                                {{ add_product_form.price_pln(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                            {{ add_product_form.submit(class="btn btn-success") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% for record in records %}
+            <div class="modal fade" id="info-product-modal-{{ record.id }}" tabindex="-1" aria-hidden="true" aria-labelledby="add-product-modal-label-{{ record.id }}">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content shadow-lg border-0 rounded">
+                        <div class="modal-header bg-primary text-white rounded-top">
+                            <h5 class="modal-title" id="info-product-modal-label-{{ record.id }}"><i class="bi bi-text-center me-2"></i> Szczegóły produktu</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <div class="border rounded-3 p-3 bg-light">
+                                        <i class="bi bi-laptop fs-1 text-secondary"></i>
+                                        <h5 class="mt-3 fw-bold">{{ record.name }}</h5>
+                                        <p class="text-muted">{{ record.category }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Symbol:</span>
+                                            <span>{{ record.symbol }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Nazwa:</span>
+                                            <span>{{ record.name }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Kategoria:</span>
+                                            <span>{{ record.category }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Producent:</span>
+                                            <span>{{ record.brand }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Model:</span>
+                                            <span>{{ record.model }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Ilość:</span>
+                                            <span>{{ record.quantity }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Waga (kg):</span>
+                                            <span>{{ record.weight_kg }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Cena jednostkowa:</span>
+                                            <span>{{ record.price_pln }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Wartość magazynowa:</span>
+                                            <span>{{ record.inventory_value_pln }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modify-product-modal-{{ record.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content shadow-lg border-0 rounded">
+                        <div class="modal-header bg-primary text-white rounded-top">
+                            <h5 class="modal-title" id="modify-product-modal-label-{{ record.id }}"><i class="bi bi-text-center me-2"></i> Szczegóły produktu</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="post" action="{{ url_for('store.modify_product', id=record.id) }}" class="modal-body p-4">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <div class="border rounded-3 p-3 bg-light">
+                                        <i class="bi bi-laptop fs-1 text-secondary"></i>
+                                        <h5 class="mt-3 fw-bold">{{ record.name }}</h5>
+                                        <p class="text-muted">{{ record.category }}</p>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success mt-4 w-75">
+                                        <i class="bi bi-save me-2"></i> Zapisz zmiany
+                                    </button>
+                                </div>
+                                <div class="col-md-8">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Symbol:</span>
+                                            <input type="text" name="symbol" value="{{ record.symbol }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Nazwa:</span>
+                                            <input type="text" name="name" value="{{ record.name }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Kategoria:</span>
+                                            <input type="text" name="category" value="{{ record.category }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Producent:</span>
+                                            <input type="text" name="brand" value="{{ record.brand }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Model:</span>
+                                            <input type="text" name="model" value="{{ record.model }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Ilość:</span>
+                                            <input type="number" name="quantity" value="{{ record.quantity }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Waga (kg):</span>
+                                            <input type="number" step="0.01" name="weight_kg" value="{{ record.weight_kg }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Cena jednostkowa:</span>
+                                            <input type="number" step="0.01" name="price_pln" value="{{ record.price_pln }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span class="fw-semi-bold">Wartość magazynowa:</span>
+                                            <input type="number" step="0.01" name="inventory_value_pln" value="{{ record.inventory_value_pln }}" class="form-control form-control-sm w-50 ms-2" />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="delete-product-modal-{{ record.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content shadow-lg border-0 rounded">
+                        <div class="modal-header bg-primary text-white rounded-top">
+                            <h5 class="modal-title" id="delete-product-modal-label-{{ record.id }}"><i class="bi bi-text-center me-2"></i> Potwierdź usunięcie</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="post" action="{{ url_for('store.delete_product', id=record.id) }}" class="modal-body p-4">
+                            <div class="text-center">
+                                <div class="border rounded-3 p-3 bg-light">
+                                    <i class="bi bi-laptop fs-1 text-secondary"></i>
+                                    <h5 class="mt-3 fw-bold">{{ record.name }}</h5>
+                                    <p class="text-muted">{{ record.category }}</p>
+                                </div>
+
+                                <button type="submit" class="btn btn-danger mt-4 w-75">
+                                    <i class="bi bi-trash me-2"></i> Usuń
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

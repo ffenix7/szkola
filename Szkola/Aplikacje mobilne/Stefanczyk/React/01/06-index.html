@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script crossorigin src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        .klasa>div {
+            color: red;
+            margin: 15px;
+
+        }
+
+        .elem {
+            border: 1px dashed red;
+            padding: 10px;
+        }
+
+        .b {
+            border: 1px solid red;
+            margin: 5px;
+        }
+    </style>
+</head>
+    <div id="react-app">
+
+    </div>
+<body>
+    <script type="text/babel">
+        const data = [
+            { id: 1, quantity: 1, name: "masło" },
+            { id: 2, quantity: 6, name: "mleko" },
+            { id: 3, quantity: 3, name: "chleb" }
+        ];
+
+        function List1() {
+            return (
+            <>
+                <ListItem quantity={data[0].quantity} name={data[0].name} />
+                <ListItem quantity={data[1].quantity} name={data[1].name} />
+                <ListItem quantity={data[2].quantity} name={data[2].name} />
+            </>
+            )
+        }
+
+        function List2(){
+            const objects = data.map((item, index) =>{
+                <ListItem key={index} quantity={item.quantity} name = {item.name} /> 
+            })
+        }
+
+        function ListItem(props) {
+            console.log("In:" + props)
+
+            return (
+                <div className="elem">
+                    {props.quantity} X {props.name}
+                    <button className="b">kup</button>
+                    <button className="b">usuń</button>
+                </div>
+            )
+        }
+
+        ReactDOM.render(
+            <>
+                <List1 />
+            </>,
+            document.getElementById("react-app")
+        )
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+ [
+                {
+                    "id": 1,
+                    "name": "platforma e-commerce v2.0",
+                    "tasks": [
+                        { "id": 101, "name": "implementacja płatności blik", "status": "Do zrobienia", "dniDoTerminu": 5 },
+                        { "id": 102, "name": "testy wydajnościowe serwera", "status": "Ukończone", "dniDoTerminu": 10 },
+                        { "id": 103, "name": "naprawa błędów widoku mobilnego", "status": "Do zrobienia", "dniDoTerminu": -8 }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "kampania marketingowa",
+                    "tasks": [
+                        { "id": 201, "name": "utworzenie grafik promocyjnych", "status": "Do zrobienia", "dniDoTerminu": 15 },
+                        { "id": 202, "name": "uruchomienie reklam google ads", "status": "Ukończone", "dniDoTerminu": 3 },
+                        { "id": 203, "name": "analiza konkurencji", "status": "Ukończone", "dniDoTerminu": 0 }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "name": "automatyzacja raportowania",
+                    "tasks": [
+                        { "id": 301, "name": "integracja z bazą danych", "status": "Do zrobienia", "dniDoTerminu": 20 },
+                        { "id": 302, "name": "testy jednostkowe skryptu", "status": "Do zrobienia", "dniDoTerminu": 40 }
+                    ]
+                }
+            ]

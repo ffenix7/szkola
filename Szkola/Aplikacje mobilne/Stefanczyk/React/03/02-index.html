@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        #container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            background-color: lightblue;
+            padding: 10px;
+            border: 1px solid blue;
+
+        }
+        #mainBox{
+            display: flex;
+            flex-direction: row;
+            gap: 50px;
+        }
+        h2, h3{
+            color: blue;
+        }
+        .mySelect{
+            border: 1px dashed blue;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin:10px;
+            padding:10px;
+        }
+    </style>
+</head> 
+<body>
+
+    <div id="react-app">
+
+    </div>
+    <script type="text/babel">
+
+        const MySelect = (props) =>{
+            //console.log(props)
+            const[selectedValue,setSelectedValue] =React.useState("")
+            
+            const handleChange = (event) =>{
+                console.log("props", event)
+                setSelectedValue(event.target.value)
+                props.handleSelect(event.target.value)
+            }
+            const options = props.array.map(function(elem,index){
+                return(
+                    <option key={index} value={elem.name}>{elem.name}</option>
+                )
+            })
+            return(
+                <div className="mySelect">
+                    <h3>Komponent MySelect</h3>
+                    <select value={selectedValue} onChange={handleChange}>
+                        {options}
+                    </select>
+                    <p>Wybrane z select: {selectedValue}</p>
+                </div>
+            )
+        }
+
+
+        const MyForm = () =>{
+            const[sent,setSent] = React.useState("")
+            const array = [
+                { id: 0, name: "Hamlet" },
+                { id: 1, name: "Krzyzacy" },
+                { id: 2, name: "Lalka" },
+                { id: 3, name: "Proces" }
+            ]
+            const array2 = [
+                { id: 0, name: "Kraków" },
+                { id: 1, name: "Warszawa" },
+                { id: 2, name: "Gdańsk" }
+            ]
+
+            const onHandleSelect = (props) =>{
+                let tmp = sent
+                tmp += props+', '
+                setSent(tmp)
+            }
+            return(
+                <div id="container">
+                    <h2>Komponent MyForm</h2>
+                    <MySelect array={array} handleSelect={onHandleSelect}/>
+                    <MySelect array={array2} handleSelect={onHandleSelect}/>
+                    <p>Wysłane: {sent}</p>
+                </div>
+            )
+        }
+
+
+        ReactDOM.render(
+                <div id="mainBox">
+                    <MyForm />
+                    <MyForm />
+                </div>,
+            document.getElementById("react-app")
+        )
+    </script>
+</body>
+</html>

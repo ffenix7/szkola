@@ -2,7 +2,6 @@
     import { Router, Link, Route } from "svelte-routing";
 </script>
 
-
 <Router>
 <header class="text-gray-600 body-font">
   <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -16,7 +15,9 @@
       <Link to="/countries" class="mr-5 hover:text-gray-900">COUNTRIES</Link>
       <Link to="/colorpicker" class="mr-5 hover:text-gray-900">COLORPICKER</Link>
       <Link to="/quiz" class="mr-5 hover:text-gray-900">Quiz</Link>
-      <Link to="/fourth-link" class="mr-5 hover:text-gray-900">Fourth Link</Link>
+      <Link to="/quiz2" class="mr-5 hover:text-gray-900">Pokequiz</Link>
+      <Link to="/pokedex" class="mr-5 hover:text-gray-900">Pokedex</Link>
+      <Link to="/jokes" class="mr-5 hover:text-gray-900">Jokes</Link>
     </nav>
     <button class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Button
       <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
@@ -26,47 +27,3 @@
   </div>
 </header>
 </Router>
-
-<style>
-  header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-    padding: 20px 0;
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-  }
-  
-  a {
-    text-decoration: none;
-    color: #333;
-    margin-right: 20px;
-  }
-  
-  a:hover {
-    color: #666;
-  }
-  
-  nav {
-    display: flex;
-    gap: 20px;
-  }
-  
-  button {
-    background-color: #e9ecef;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #dee2e6;
-  }
-</style>

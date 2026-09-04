@@ -44,7 +44,7 @@ void LinkedList::insertBack(double num){
 
 void LinkedList::insertAt(int index, double num){
     if(index < 0 || index > this->size()) throw std::runtime_error("Index out of bounds!");
-    if(index == this->size()) this->insertFront(num);
+    if(index == this->size()) this->insertBack(num);
 
     ListNode* cur = this->head;
     int iterator = 0;
@@ -98,7 +98,7 @@ bool LinkedList::deleteByValue(double num){
     ListNode* cur = this->head;
     if(cur==nullptr) throw std::runtime_error("Can't delete from an empty list!");
     
-    if(this->head->val == num){
+    if(cur->val == num){
         ListNode* temp = this->head;
         this->head = head->next;
         delete temp;

@@ -1,0 +1,179 @@
+[
+ {
+ "id": "aatrox",
+ "key": "266",
+ "name": "Aatrox",
+ "title": "the Darkin Blade",
+ "tags": [
+ "Fighter",
+ "Tank"
+ ],
+ "stats": {
+ "hp": 580,
+ "movespeed": 345
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Aatrox.png"
+ },
+ {
+ "id": "ahri",
+ "key": "103",
+ "name": "Ahri",
+ "title": "the Nine-Tailed Fox",
+ "tags": [
+ "Mage",
+ "Assassin"
+ ],
+ "stats": {
+ "hp": 526,
+ "movespeed": 330
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Ahri.png"
+ },
+ {
+ "id": "akali",
+ "key": "84",
+ "name": "Akali",
+ "title": "the Rogue Assassin",
+ "tags": [
+ "Assassin"
+ ],
+ "stats": {
+ "hp": 575,
+ "movespeed": 345
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Akali.png"
+ },
+ {
+ "id": "alistar",
+ "key": "12",
+ "name": "Alistar",
+ "title": "the Minotaur",
+ "tags": [
+ "Tank",
+ "Support"
+ ],
+ "stats": {
+ "hp": 600,
+ "movespeed": 330
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Alistar.png"
+ },
+ {
+ "id": "amumu",
+ "key": "32",
+ "name": "Amumu",
+ "title": "the Sad Mummy",
+ "tags": [
+ "Tank",
+ "Mage"
+ ],
+ "stats": {
+ "hp": 615,
+ "movespeed": 335
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Amumu.png"
+ },
+ {
+ "id": "anivia",
+ "key": "34",
+ "name": "Anivia",
+ "title": "the Cryophoenix",
+ "tags": [
+ "Mage",
+ "Support"
+ ],
+ "stats": {
+ "hp": 480,
+ "movespeed": 325
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Anivia.png"
+ },
+ {
+ "id": "annie",
+ "key": "1",
+ "name": "Annie",
+ "title": "the Dark Child",
+ "tags": [
+ "Mage"
+ ],
+ "stats": {
+ "hp": 524,
+ "movespeed": 335
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Annie.png"
+ },
+ {
+ "id": "braum",
+ "key": "201",
+ "name": "Braum",
+ "title": "the Heart of the Freljord",
+ "tags": [
+ "Support",
+ "Tank"
+ ],
+ "stats": {
+ "hp": 540,
+ "movespeed": 335
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Braum.png"
+ },
+ {
+ "id": "caitlyn",
+ "key": "51",
+ "name": "Caitlyn",
+ "title": "the Sheriff of Piltover",
+ "tags": [
+ "Marksman"
+ ],
+ "stats": {
+ "hp": 510,
+ "movespeed": 325
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Caitlyn.png"
+ },
+ {
+ "id": "darius",
+ "key": "122",
+ "name": "Darius",
+ "title": "the Hand of Noxus",
+ "tags": [
+ "Fighter",
+ "Tank"
+ ],
+ "stats": {
+ "hp": 582,
+ "movespeed": 340
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Darius.png"
+ },
+ {
+ "id": "ezreal",
+ "key": "81",
+ "name": "Ezreal",
+ "title": "the Prodigal Explorer",
+ "tags": [
+ "Marksman",
+ "Mage"
+ ],
+ "stats": {
+ "hp": 530,
+ "movespeed": 325
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Ezreal.png"
+ },
+ {
+ "id": "fizz",
+ "key": "105",
+ "name": "Fizz",
+ "title": "the Tidal Trickster",
+ "tags": [
+ "Assassin",
+ "Fighter"
+ ],
+ "stats": {
+ "hp": 550,
+ "movespeed": 335
+ },
+ "icon": "http://ddragon.leagueoflegends.com/cdn/10.23.1/img/champion/Fizz.png"
+ }
+]

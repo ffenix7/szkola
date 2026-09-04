@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efekty obrazu</title>
+    <link rel="stylesheet" href="styl.css">
+</head>
+<body>
+    <header>
+        <h2>Efekty na obrazach</h2>
+    </header>
+    <section>
+        <img src="./pszczola.jpg" id="image_1" alt="pszczoła na fioletowym kwiatku"><br>
+        <input type="radio" name="efect" value="blur" id="blur"><label>Blur</label><br>
+        <input type="radio" name="efect" value="sepia" id="sepia"><label>Sepia</label><br>
+        <input type="radio" name="efect" value="negatyw" id="inverse"><label>Negatyw</label><br>
+        <button id="button1">Zastosuj</button>
+    </section>
+    <section>
+        <img src="./pomarancza.jpg" alt="drzewo pomarańczy" id="image_2"><br>
+        <button id="color">Kolorowy</button>
+        <button id="grayscale">Czarno-biały</button>
+    </section>
+    <section>
+        <img src="./owoce.jpg" alt="Kosz pełen owoców" id="image_3">
+        <input type="range" min="0" max="100" value="100" id="range_1"><br>
+        <button id="button3">Zastosuj</button>
+    </section>
+    <section>
+        <img src="./zolw.jpg" alt="Zółw w wodzie" id="image_4">
+        <input type="range" min="0" max="250" id="range_2"><br>
+        <button id="button4">Zastosuj</button>
+    </section>
+    <footer>
+        <p><a href="http://www.css.com/" target="_blank">Zobacz inne efekty obrazu</a></p>
+        <p>Stronę wykonał: Filip Gębala</p>
+    </footer>
+
+    <script>
+        const image_1 = document.getElementById("image_1")
+        const image_2 = document.getElementById("image_2")
+        const image_3 = document.getElementById("image_3")
+        const image_4 = document.getElementById("image_4")
+
+        const button_1 = document.getElementById("button1")
+        const button_color = document.getElementById("color")
+        const button_grayscale = document.getElementById("grayscale")
+        const button_3 = document.getElementById("button3")
+        const button_4 = document.getElementById("button4")
+
+        const range_1 = document.getElementById("range_1")
+        const range_2 = document.getElementById("range_2")
+
+        button_1.addEventListener("click", () =>{
+            console.log("test")
+            const radio_blur = document.getElementById("blur")
+            const radio_sepia = document.getElementById("sepia")
+            const radio_inverse = document.getElementById("inverse")
+            if(radio_blur.checked){
+                image_1.style.filter = "blur(8px)";
+            }
+            else if(radio_sepia.checked){
+                image_1.style.filter = "sepia(100%)";
+            }
+            else if(radio_inverse.checked){
+                image_1.style.filter = "invert(100%)";
+            }
+        })
+
+        button_color.addEventListener("click", () =>{
+            image_2.style.filter = "none"
+        })
+        button_grayscale.addEventListener("click", () =>{
+            image_2.style.filter = "grayscale(100%)"
+        })
+
+        button_3.addEventListener("click", () => {
+            const opacity = range_1.value
+            image_3.style.filter = `opacity(${opacity}%)`
+        })
+
+        button_4.addEventListener("click", () => {
+            const brightness = range_2.value
+            image_4.style.filter = `brightness(${brightness}%)`
+        })
+    </script>
+</body>
+</html>

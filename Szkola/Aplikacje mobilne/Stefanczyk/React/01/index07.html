@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        .task ul > li{
+            border:1px dashed blue;
+            padding: 10px;
+        }
+        .task{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="react-app">
+
+</div>
+
+
+    <script type="text/babel">
+        const data = [
+            {
+                id: 1,
+                task: "kupić masło",
+                count: 4,
+                color_id: "red",
+                color_task: "green",
+                color_count: "blue" 
+            },{
+                id: 2,
+                task: "zjeść chleb",
+                count: 3,
+                color_id: "green",
+                color_task: "red",
+                color_count: "blue" 
+            },{
+                id: 3,
+                task: "wypić herbatę",
+                count: 1,
+                color_id: "gray",
+                color_task: "orange",
+                color_count: "blue" 
+            }
+        ];
+
+        function Task(props){
+            return(
+                <div className="task">
+                    <ul style={{ border: "1px dashed gray" }}>
+                        <li style={{ color: props.color_id }}>
+                            id: {props.id}
+                        </li>
+                        <li style={{ color: props.color_task }}>
+                            task: {props.task}
+                        </li>
+                        <li style={{ color: props.color_count }}>
+                            count: {props.count}
+                        </li>
+                    </ul>
+                </div>
+            )
+        }
+
+        function TaskList(){
+            const objects = data.map((item) => (
+                <Task 
+                    key={item.id}
+                    task={item.task} 
+                    count={item.count} 
+                    id={item.id}
+                    color_id={item.color_id}
+                    color_task={item.color_task}
+                    color_count={item.color_count}
+                />
+            ));
+            return(
+                <>
+                    {objects}
+                </>
+            )
+        }
+        ReactDOM.render(
+            <>
+                <TaskList />
+            </>,
+            document.getElementById('react-app')
+        );
+    </script>
+</body>
+</html>

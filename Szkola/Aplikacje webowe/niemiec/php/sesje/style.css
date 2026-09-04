@@ -1,0 +1,79 @@
+body{
+    background-color: rgb(161, 173, 173);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul li{
+    display: inline-block;
+}
+
+.menu-link{
+    display: inline-block;
+    margin-right: 15px;
+    text-decoration: none;
+    color: rgb(139, 210, 228);
+    background-color: rgb(79, 103, 139);
+    border-radius: 10px;
+    padding: 10px;
+    transition: all .3s;
+}
+
+.menu-link:hover{
+    background-color: rgb(79, 102, 136);
+    color: rgb(146, 206, 221);
+}
+
+footer{
+    margin-top: 15px;
+    text-align: center;
+    color: #ccc;
+    background-color: #4c4c4c;
+    border-radius: 20px;
+}
+
+.error-message{
+    color: beige;
+    background-color: rgb(181, 0, 0);
+    border: 1px solid black;
+    border-radius: 10px;
+    text-align: center;
+    margin: 10px;
+}
+
+.success-message{
+    color: beige;
+    background-color: rgb(73, 191, 10);
+    border: 1px solid black;
+    border-radius: 10px;
+    text-align: center;
+    margin: 10px;
+}
+
+.chat{
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap:10px;
+    padding: 10px;
+    background-color: #a79999;
+    border-radius: 10px;
+    width: 40%;
+}
+
+td{
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.delete{
+    text-decoration: none;
+    color: rgb(176, 27, 27);
+}

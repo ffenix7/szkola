@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+        <script crossorigin src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+
+    </style>
+</head> 
+<body>
+
+    <div id="react-app">
+
+    </div>
+    <script type="text/babel">
+
+        const Square = () =>{
+            const [data, setData] = React.useState({h: 100, c: 100})
+
+            const onButtonClick = () =>{
+                const temp_h = Math.floor(Math.random() * 300)
+                const temp_c = Math.floor(Math.random() * 255)
+                console.log(temp_c);
+                console.log(temp_h);
+                
+                
+                setData({c:temp_c, h:temp_h})
+            }
+
+            return(
+                <div className="card">
+                    <button onClick={onButtonClick}>klik</button>
+                    <p> height = {data.h}</p>
+                    <p> color = {data.c}</p>
+                </div>
+            )
+        }
+
+        ReactDOM.render(
+            <div id="container">
+                <Square />
+            </div>,
+            document.getElementById("react-app")
+        )
+    </script>
+</body>
+</html>

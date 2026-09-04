@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Logowanie{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm p-4">
+            <h1 class="h4 mb-4">Zaloguj się</h1>
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.user_email.label(class_="form-label") }}
+                    {{ form.user_email(class_="form-control", placeholder="nazwa@domena.pl") }}
+                    {% for error in form.user_email.errors %}
+                        <small class="form-text text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class_="form-label") }}
+                    {{ form.password(class_="form-control") }}
+                    {% for error in form.password.errors %}
+                        <small class="form-text text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                {{ form.submit(class_="btn btn-primary w-100") }}
+            </form>
+            <p class="text-center text-muted mt-4 mb-0">
+                Nie masz konta? <a href="{{ url_for('register') }}">Zarejestruj się</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
