@@ -102,7 +102,7 @@ for($i=0;$i<sizeof($dots_healthy)-1;$i++){
     imageline($im, $dots_healthy[$i][0], $dots_healthy[$i][1], $dots_healthy[$i+1][0], $dots_healthy[$i+1][1], RED);
 }
 
-for($i=0;$i<sizeof($dots_healthy)-1;$i++){
+for($i=0;$i<sizeof($dots_ill)-1;$i++){
     imagesetstyle($im, [BL]);
     imageline($im, $dots_ill[$i][0], $dots_ill[$i][1], $dots_ill[$i+1][0], $dots_ill[$i+1][1], BLUE);
 }
