@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication
-from main import MainWindow
+from task_quadratic.main import MainWindow
 
 app = QApplication(sys.argv)
 
