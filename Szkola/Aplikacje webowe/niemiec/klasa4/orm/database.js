@@ -1,9 +1,9 @@
 import {DataTypes, Sequelize} from 'sequelize'
 
 export async function initDatabase(){
-    const sequelize = new Sequelize({
-        dialect: 'sqlite',
-        storage: 'database.sqlite'
+    const sequelize = new Sequelize('postgres', 'postgres', 'root',{
+        dialect: 'postgres',
+        host: 'localhost'
     });
 
     try {
