@@ -64,7 +64,7 @@ app.post('/comment', async (req,res)=>{
         });
     }
 
-    if(req.body.author===undefined || req.body.author.length > 255){
+    if(req.body.content===undefined || req.body.author.length > 255){
         return res.status(400).json({
             success: false,
             message: "Musisz podać content komentarza, którego długość to max 255 znaków!"
@@ -78,7 +78,7 @@ app.post('/comment', async (req,res)=>{
         });
     }
 
-    const post = Post.findByPk(req.body.postID)
+    const post = await Post.findByPk(req.body.postID)
     if(post === null){
         return res.status(400).json({
             success: false,
